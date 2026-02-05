@@ -1,73 +1,78 @@
 package view;
 
-import controller.FernseherController;
-import model.Fernseher;
+import javax.swing.*;
+import java.awt.*;
 
-import java.util.List;
-import java.util.Scanner;
+public class FernseherView extends JFrame {
 
-public class FernseherView {
-    FernseherController controller = new FernseherController();
-    Scanner sc = new Scanner(System.in);
-    boolean running = true;
+    // Instanzierung der Komponente
+    JLabel lblMarke = new JLabel("Marke");
+    JTextField txtMarke = new JTextField();
+    JLabel lblModell = new JLabel("Modell");
+    JTextField txtModell = new JTextField();
+    JLabel lblPreis = new JLabel("Preis");
+    JTextField txtPreis = new JTextField();
+    JLabel lblBildschirmdiagonale = new JLabel("Bildschirmdiagonale");
+    JTextField txtBildschirmdiagonale = new JTextField();
+    JLabel lblDisplaytechnologie = new JLabel("Displaytechnologie");
+    JTextField txtDisplaytechnologie = new JTextField();
+    JLabel lblBildschirmaufloesung = new JLabel("Bildschirmauflösung");
+    JTextField txtBildschirmaufloesung = new JTextField();
+    JLabel lblBildwiederholfrequenz = new JLabel("Bildwiederholfrequenz");
+    JTextField txtBildwederholfrequenz = new JTextField();
+    JLabel lblGewicht = new JLabel("Gewicht");
+    JTextField txtGewicht = new JTextField();
+    JLabel lblReleasedatum = new JLabel("Releasedatum");
+    JTextField txtReleasedatum = new JTextField();
+    JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
+    JTextField txtPixelaufloesung = new JTextField();
+    JLabel lblNennleistung = new JLabel("Nennleistung");
+    JTextField txtNennlesitung = new JTextField();
 
-    public void menu() {
-        while (running) {
-            System.out.println("Wähle eine Option");
-            ui();
-            int entscheidung = sc.nextInt();
-            sc.nextLine();
+    JLabel lblWhiteSpace = new JLabel();
 
-            switch (entscheidung) {
-                case 1:
-                    addFernseherUI();
-                    break;
+    JButton btnAdd = new JButton("Hinzufügen");
 
-                case 2:
-                    getAllFernseherUI();
-                    break;
+    JDialog dialog = new JDialog();
 
-                case 0:
-                    running = false;
-                    break;
-            }
-        }
+    public void showAddDialog() {
+        dialog.setSize(400, 500);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new GridLayout(0, 2, 5, 5));
 
+        addComponentsToDialog();
+
+        dialog.setVisible(true);
     }
 
-    public void ui() {
-        System.out.println("1 - Fernseher hinzufügen");
-        System.out.println("2 - Alle Fernseher anschauen");
-        System.out.println("0 - Abbrechen");
+    public void addComponentsToDialog() {
+        // Label und Textfields
+        dialog.add(lblMarke);
+        dialog.add(txtMarke);
+        dialog.add(lblModell);
+        dialog.add(txtModell);
+        dialog.add(lblPreis);
+        dialog.add(txtPreis);
+        dialog.add(lblBildschirmdiagonale);
+        dialog.add(txtBildschirmdiagonale);
+        dialog.add(lblDisplaytechnologie);
+        dialog.add(txtDisplaytechnologie);
+        dialog.add(lblBildschirmaufloesung);
+        dialog.add(txtBildschirmaufloesung);
+        dialog.add(lblBildwiederholfrequenz);
+        dialog.add(txtBildwederholfrequenz);
+        dialog.add(lblGewicht);
+        dialog.add(txtGewicht);
+        dialog.add(lblReleasedatum);
+        dialog.add(txtReleasedatum);
+        dialog.add(lblPixelaufloesung);
+        dialog.add(txtPixelaufloesung);
+        dialog.add(lblNennleistung);
+        dialog.add(txtNennlesitung);
+
+        dialog.add(lblWhiteSpace);
+
+        dialog.add(btnAdd);
+
     }
-
-
-
-    public void addFernseherUI() {
-        System.out.println("Marke eingeben:");
-        String marke = sc.nextLine();
-
-        System.out.println("Modell eingeben:");
-        String modell = sc.nextLine();
-
-        Fernseher f = new Fernseher(marke, modell);
-
-        controller.addFernseher(f);
-    }
-
-    public void getAllFernseherUI() {
-        System.out.println("Fernseher: \n");
-        List<Fernseher> alle = controller.getAllFernseher();
-
-        if (alle.isEmpty()) {
-            System.out.println("Keine Fernseher vorhanden");
-        }
-
-        else {
-            for (Fernseher f : alle) {
-                System.out.println(f);
-            }
-        }
-    }
-
 }
