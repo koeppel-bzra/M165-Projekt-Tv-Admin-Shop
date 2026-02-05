@@ -1,5 +1,10 @@
+import controller.FernseherController;
+import view.FernseherView;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("he");
+        FernseherController controller = new FernseherController();
+        FernseherView view = new FernseherView();
+        view.menu();
     }
 }
