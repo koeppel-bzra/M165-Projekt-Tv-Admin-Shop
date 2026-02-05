@@ -1,9 +1,21 @@
 package view;
 
+import com.sun.tools.javac.Main;
+import controller.FernseherController;
+import model.Fernseher;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class FernseherView extends JFrame {
+
+    FernseherController controller;
+    MainView view; // Referenz auf MainView
+
+    public FernseherView(MainView view, FernseherController controller) {
+        this.view = view;
+        this.controller = controller;
+    }
 
     // Instanzierung der Komponente
     JLabel lblMarke = new JLabel("Marke");
@@ -41,6 +53,9 @@ public class FernseherView extends JFrame {
         dialog.setLayout(new GridLayout(0, 2, 5, 5));
 
         addComponentsToDialog();
+        addFernseherUI();
+
+
 
         dialog.setVisible(true);
     }
@@ -73,6 +88,21 @@ public class FernseherView extends JFrame {
         dialog.add(lblWhiteSpace);
 
         dialog.add(btnAdd);
+    }
 
+    public void addFernseherUI() {
+        btnAdd.addActionListener(e -> {
+
+            String marke = txtMarke.getText();
+            String modell = txtModell.getText();
+
+            Fernseher f = new Fernseher(marke, modell);
+
+            controller.addFernseher(f);
+
+            view.listModel.addElement(f.getMarke() + " - " + f.getModell());
+
+            dialog.dispose();
+        });
     }
 }

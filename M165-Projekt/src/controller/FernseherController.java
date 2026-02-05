@@ -16,7 +16,7 @@ public class FernseherController {
 
         repo.addFernseher(f);
 
-        System.out.println("Fernseher erfolgreich hinzugefügt" + f);
+        System.out.println("Fernseher erfolgreich hinzugefügt\n" + f);
     }
 
     public List<Fernseher> getAllFernseher() {
