@@ -3,12 +3,16 @@ package persistence;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import model.Fernseher;
 import model.DisplayTechnologie;
 import model.Bildschirmaufloesung;
 import model.Pixelaufloesung;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,11 +77,19 @@ public class FernseherRepo {
 
 
 
-    // Mapping von Document zu Fernseher
     private Fernseher fromDocument(Document doc) {
         DisplayTechnologie display = getDisplayTechnologieSafe(doc);
         Bildschirmaufloesung aufloesung = getBildschirmAufloesungSafe(doc);
         Pixelaufloesung pixel = getPixelAufloesungSafe(doc);
+
+        Date date = doc.getDate("releasedatum");
+        LocalDate releaseDatum = null;
+
+        if (date != null) {
+            releaseDatum = date.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
 
         return new Fernseher(
                 doc.getObjectId("_id"),
@@ -89,11 +101,12 @@ public class FernseherRepo {
                 aufloesung,
                 getIntegerSafe(doc, "bildwiederholfrequenz"),
                 getDoubleSafe(doc, "gewicht"),
-                doc.getDate("releasedatum"),
+                releaseDatum,
                 pixel,
                 getIntegerSafe(doc, "nennleistung")
         );
     }
+
 
     // CRUD-Methoden
     public void addFernseher(Fernseher f) {
@@ -113,6 +126,33 @@ public class FernseherRepo {
         collection.insertOne(document);
 
         f.setFernseherId(document.getObjectId("_id"));
+    }
+
+    public void updateFernseher(Fernseher f) {
+        if (f.getFernseherId() == null) {
+            return;
+        }
+
+        Document updateDoc = new Document().append("marke", f.getMarke())
+                .append("modell", f.getModell())
+                .append("preis", f.getPreis())
+                .append("bildschirmdiagonale", f.getBildschirmdiagonale())
+                .append("displayTechnologie", f.getDisplayTechnologie().name())
+                .append("bildschirmAufloesung", f.getBildschirmAufloesung().name())
+                .append("bildwiederholfrequenz", f.getBildwiederholFrequenz())
+                .append("gewicht", f.getGewicht())
+                .append("releasedatum", f.getReleaseDatum())
+                .append("pixelaufloesung", f.getPixelaufloesung().name())
+                .append("nennleistung", f.getNennleistung());
+
+        Document filter = new Document("_id", f.getFernseherId());
+        collection.updateOne(filter, new Document("$set", updateDoc));
+    }
+
+    public void deleteFernseher(ObjectId _id) {
+        if (_id != null) {
+            collection.deleteOne(new Document("_id", _id));
+        }
     }
 
     public List<Fernseher> getAll() {

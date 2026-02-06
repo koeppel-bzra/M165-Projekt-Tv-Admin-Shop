@@ -1,6 +1,7 @@
 package controller;
 
 import model.Fernseher;
+import org.bson.types.ObjectId;
 import persistence.FernseherRepo;
 
 import java.util.ArrayList;
@@ -17,6 +18,19 @@ public class FernseherController {
         repo.addFernseher(f);
 
         System.out.println("Fernseher erfolgreich hinzugefügt\n" + f);
+    }
+
+    public void deleteFernseher(Fernseher f, ObjectId id) {
+        tvs.remove(f);
+
+        repo.deleteFernseher(id);
+
+        System.out.println("Fernseher erfolgreich gelöscht\n" + f);
+    }
+
+    public void updateFernseher(Fernseher f) {
+        repo.updateFernseher(f);
+        System.out.println("Fernseher erfolgreich aktualisiert");
     }
 
     public List<Fernseher> getAllFernseher() {

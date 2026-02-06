@@ -1,76 +1,160 @@
 package view;
 
-import com.sun.tools.javac.Main;
 import controller.FernseherController;
 import model.Bildschirmaufloesung;
 import model.DisplayTechnologie;
 import model.Fernseher;
 import model.Pixelaufloesung;
-import org.bson.Document;
 
 import javax.swing.*;
 import java.awt.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.awt.event.ActionListener;
 
 public class FernseherView extends JFrame {
 
-    FernseherController controller;
-    MainView view; // Referenz auf MainView
+    private FernseherController controller;
+    private MainView view;
+
+    // Komponenten
+    private JLabel lblMarke = new JLabel("Marke");
+    private JTextField txtMarke = new JTextField();
+    private JLabel lblModell = new JLabel("Modell");
+    private JTextField txtModell = new JTextField();
+    private JLabel lblPreis = new JLabel("Preis");
+    private JTextField txtPreis = new JTextField();
+    private JLabel lblBildschirmdiagonale = new JLabel("Bildschirmdiagonale");
+    private JTextField txtBildschirmdiagonale = new JTextField();
+    private JLabel lblDisplaytechnologie = new JLabel("Displaytechnologie");
+    private JComboBox<DisplayTechnologie> cmbDisplaytechnologie = new JComboBox<>(DisplayTechnologie.values());
+    private JLabel lblBildschirmaufloesung = new JLabel("Bildschirmauflösung");
+    private JComboBox<Bildschirmaufloesung> cmbBildschirmaufloesung = new JComboBox<>(Bildschirmaufloesung.values());
+    private JLabel lblBildwiederholfrequenz = new JLabel("Bildwiederholfrequenz");
+    private JTextField txtBildwederholfrequenz = new JTextField();
+    private JLabel lblGewicht = new JLabel("Gewicht [kg]");
+    private JTextField txtGewicht = new JTextField();
+    private JLabel lblReleasedatum = new JLabel("Releasedatum");
+    private JTextField txtReleasedatum = new JTextField();
+    private JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
+    private JComboBox<Pixelaufloesung> cmbPixelaufloesung = new JComboBox<>(Pixelaufloesung.values());
+    private JLabel lblNennleistung = new JLabel("Nennleistung [w]");
+    private JTextField txtNennleistung = new JTextField();
+
+    private JLabel lblWhiteSpace = new JLabel();
+    private JButton btnAction = new JButton("Hinzufügen");
+    private JDialog dialog = new JDialog();
 
     public FernseherView(MainView view, FernseherController controller) {
         this.view = view;
         this.controller = controller;
     }
 
-    // Instanzierung der Komponente
-    JLabel lblMarke = new JLabel("Marke");
-    JTextField txtMarke = new JTextField();
-    JLabel lblModell = new JLabel("Modell");
-    JTextField txtModell = new JTextField();
-    JLabel lblPreis = new JLabel("Preis");
-    JTextField txtPreis = new JTextField();
-    JLabel lblBildschirmdiagonale = new JLabel("Bildschirmdiagonale");
-    JTextField txtBildschirmdiagonale = new JTextField();
-    JLabel lblDisplaytechnologie = new JLabel("Displaytechnologie");
-    JComboBox<DisplayTechnologie> cmbDisplaytechnologie = new JComboBox<>(DisplayTechnologie.values());
-    JLabel lblBildschirmaufloesung = new JLabel("Bildschirmauflösung");
-    JComboBox<Bildschirmaufloesung> cmbBildschirmaufloesung = new JComboBox<>(Bildschirmaufloesung.values());
-    JLabel lblBildwiederholfrequenz = new JLabel("Bildwiederholfrequenz");
-    JTextField txtBildwederholfrequenz = new JTextField();
-    JLabel lblGewicht = new JLabel("Gewicht");
-    JTextField txtGewicht = new JTextField();
-    JLabel lblReleasedatum = new JLabel("Releasedatum");
-    JTextField txtReleasedatum = new JTextField();
-    JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
-    JComboBox<Pixelaufloesung> cmbPixelaufloesung = new JComboBox<>(Pixelaufloesung.values());
-    JLabel lblNennleistung = new JLabel("Nennleistung");
-    JTextField txtNennleistung = new JTextField();
 
-
-
-    JLabel lblWhiteSpace = new JLabel();
-
-    JButton btnAdd = new JButton("Hinzufügen");
-
-    JDialog dialog = new JDialog();
-
+    // Dialog für das Adden
     public void showAddDialog() {
-        dialog.setSize(400, 500);
-        dialog.setLocationRelativeTo(this);
-        dialog.setLayout(new GridLayout(0, 2, 5, 5));
+        clearFields();
+        btnAction.setText("Hinzufügen");
 
-        addComponentsToDialog();
-        addFernseherUI();
+        for (ActionListener al : btnAction.getActionListeners()) {
+            btnAction.removeActionListener(al);
+        }
+        btnAction.addActionListener(e -> addFernseher());
 
-
-
-        dialog.setVisible(true);
+        setupDialog();
     }
 
-    public void addComponentsToDialog() {
-        // Label und Textfields
+    private void addFernseher() {
+        try {
+            Fernseher f = buildFernseherFromFields();
+            controller.addFernseher(f);
+            view.refreshList();
+            dialog.dispose();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(dialog, "Bitte gültige Werte eingeben");
+        }
+    }
+
+    // Dialog für das Updaten
+    public void showUpdateDialog() {
+        String selectedString = view.list.getSelectedValue();
+        if (selectedString == null) {
+            JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
+            return;
+        }
+
+        Fernseher fToUpdate = controller.getAllFernseher().stream().filter(f -> (f.getMarke() + " - " + f.getModell()).equals(selectedString)).findFirst().orElse(null);
+
+        if (fToUpdate == null) {
+            JOptionPane.showMessageDialog(view, "Fernseher nicht gefunden");
+            return;
+        }
+
+        fillFields(fToUpdate);
+
+        btnAction.setText("Aktualisieren");
+
+        for (ActionListener al : btnAction.getActionListeners()) {
+            btnAction.removeActionListener(al);
+        }
+        btnAction.addActionListener(e -> updateFernseherUI(fToUpdate));
+
+        setupDialog();
+    }
+
+    public void updateFernseherUI(Fernseher f) {
+        try {
+            f.setMarke(txtMarke.getText());
+            f.setModell(txtModell.getText());
+            f.setPreis(Double.parseDouble(txtPreis.getText()));
+            f.setBildschirmdiagonale(Integer.parseInt(txtBildschirmdiagonale.getText()));
+            f.setDisplayTechnologie((DisplayTechnologie) cmbDisplaytechnologie.getSelectedItem());
+            f.setBildschirmAufloesung((Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem());
+            f.setBildwiederholFrequenz(Integer.parseInt(txtBildwederholfrequenz.getText()));
+            f.setGewicht(Double.parseDouble(txtGewicht.getText()));
+            f.setReleaseDatum(LocalDate.parse(txtReleasedatum.getText(), DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            f.setPixelaufloesung((Pixelaufloesung) cmbPixelaufloesung.getSelectedItem());
+            f.setNennleistung(Integer.parseInt(txtNennleistung.getText()));
+
+            controller.updateFernseher(f);
+
+            view.refreshList();
+            dialog.dispose();
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(dialog, "Ungültige Eingabe");
+        }
+    }
+
+    // Löschen
+    public void deleteFernseherUI() {
+        String selectedString = view.list.getSelectedValue();
+        if (selectedString == null) {
+            JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
+            return;
+        }
+
+        Fernseher selected = null;
+        for (Fernseher f : controller.getAllFernseher()) {
+            if ((f.getMarke() + " - " + f.getModell()).equals(selectedString)) {
+                selected = f;
+                break;
+            }
+        }
+
+        if (selected != null) {
+            controller.deleteFernseher(selected, selected.getFernseherId());
+            view.refreshList();
+            view.ClearDetailList();
+        }
+    }
+
+    // Generalisierte Methode für Adden und Updaten
+    private void setupDialog() {
+        dialog.getContentPane().removeAll();
+        dialog.setSize(400, 500);
+        dialog.setLocationRelativeTo(view);
+        dialog.setLayout(new GridLayout(0, 2, 5, 5));
+
         dialog.add(lblMarke);
         dialog.add(txtMarke);
         dialog.add(lblModell);
@@ -93,76 +177,50 @@ public class FernseherView extends JFrame {
         dialog.add(cmbPixelaufloesung);
         dialog.add(lblNennleistung);
         dialog.add(txtNennleistung);
-
         dialog.add(lblWhiteSpace);
+        dialog.add(btnAction);
 
-        dialog.add(btnAdd);
+        dialog.setVisible(true);
     }
 
-    public void addFernseherUI() {
-        btnAdd.addActionListener(e -> {
-
-            try {
-                String marke = txtMarke.getText();
-                String modell = txtModell.getText();
-                double preis = Double.parseDouble(txtPreis.getText());
-                int bildschirmdiagonale = Integer.parseInt(txtBildschirmdiagonale.getText());
-
-                DisplayTechnologie displayTechnologie = (DisplayTechnologie) cmbDisplaytechnologie.getSelectedItem();
-                Bildschirmaufloesung bildschirmAufloesung = (Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem();
-                int bildwiederholfrequenz = Integer.parseInt(txtBildwederholfrequenz.getText());
-                double gewicht = Double.parseDouble(txtGewicht.getText());
-
-                String releasedatumString = txtReleasedatum.getText();
-                SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-                Date releaseDatum = formatter.parse(releasedatumString);
-
-                Pixelaufloesung pixelAufloesung = (Pixelaufloesung) cmbPixelaufloesung.getSelectedItem();
-                int nennleistung = Integer.parseInt(txtNennleistung.getText());
-
-                // Fernseher-Objekt erstellen
-                Fernseher f = new Fernseher(marke, modell, preis, bildschirmdiagonale, displayTechnologie,
-                        bildschirmAufloesung, bildwiederholfrequenz,
-                        gewicht, releaseDatum, pixelAufloesung, nennleistung);
-
-                // Zur DB hinzufügen
-                controller.addFernseher(f);
-
-                // In die List anzeigen
-                view.listModel.addElement(f.getMarke() + " - " + f.getModell());
-
-                // Optional: Dialog schließen
-                dialog.dispose();
-
-            } catch (NumberFormatException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(dialog, "Bitte gültige Werte eingeben");
-
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(dialog, "Bitte ein korrektes Datum eingeben (TT.MM.JJJJ)");
-            }
-
-        });
+    private void clearFields() {
+        txtMarke.setText("");
+        txtModell.setText("");
+        txtPreis.setText("");
+        txtBildschirmdiagonale.setText("");
+        txtBildwederholfrequenz.setText("");
+        txtGewicht.setText("");
+        txtReleasedatum.setText("");
+        txtNennleistung.setText("");
     }
 
-
-    private DisplayTechnologie getDisplayTechnologieSafe(Document doc) {
-        String value = doc.getString("displayTechnologie");
-        if (value == null) return DisplayTechnologie.LED; // Standardwert
-        return DisplayTechnologie.valueOf(value.toUpperCase());
+    private void fillFields(Fernseher f) {
+        txtMarke.setText(f.getMarke());
+        txtModell.setText(f.getModell());
+        txtPreis.setText(String.valueOf(f.getPreis()));
+        txtBildschirmdiagonale.setText(String.valueOf(f.getBildschirmdiagonale()));
+        cmbDisplaytechnologie.setSelectedItem(f.getDisplayTechnologie());
+        cmbBildschirmaufloesung.setSelectedItem(f.getBildschirmAufloesung());
+        txtBildwederholfrequenz.setText(String.valueOf(f.getBildwiederholFrequenz()));
+        txtGewicht.setText(String.valueOf(f.getGewicht()));
+        txtReleasedatum.setText(f.getReleaseDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        cmbPixelaufloesung.setSelectedItem(f.getPixelaufloesung());
+        txtNennleistung.setText(String.valueOf(f.getNennleistung()));
     }
 
-    private Bildschirmaufloesung getBildschirmAufloesungSafe(Document doc) {
-        String value = doc.getString("bildschirmAufloesung");
-        if (value == null) return Bildschirmaufloesung.HD;
-        return Bildschirmaufloesung.valueOf(value.toUpperCase());
+    private Fernseher buildFernseherFromFields() throws NumberFormatException {
+        return new Fernseher(
+                txtMarke.getText(),
+                txtModell.getText(),
+                Double.parseDouble(txtPreis.getText()),
+                Integer.parseInt(txtBildschirmdiagonale.getText()),
+                (DisplayTechnologie) cmbDisplaytechnologie.getSelectedItem(),
+                (Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem(),
+                Integer.parseInt(txtBildwederholfrequenz.getText()),
+                Double.parseDouble(txtGewicht.getText()),
+                LocalDate.parse(txtReleasedatum.getText(), DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                (Pixelaufloesung) cmbPixelaufloesung.getSelectedItem(),
+                Integer.parseInt(txtNennleistung.getText())
+        );
     }
-
-    private Pixelaufloesung getPixelAufloesungSafe(Document doc) {
-        String value = doc.getString("pixelaufloesung");
-        if (value == null) return Pixelaufloesung.P720;
-        return Pixelaufloesung.valueOf(value.toUpperCase());
-    }
-
 }

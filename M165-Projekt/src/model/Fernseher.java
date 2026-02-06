@@ -2,6 +2,7 @@ package model;
 
 import org.bson.types.ObjectId;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Fernseher {
@@ -14,7 +15,7 @@ public class Fernseher {
     private Bildschirmaufloesung bildschirmAufloesung;
     private int bildwiederholFrequenz;
     private double gewicht;
-    private Date releaseDatum;
+    private LocalDate releaseDatum;
     private Pixelaufloesung pixelaufloesung;
     private int nennleistung;
 
@@ -38,7 +39,7 @@ public class Fernseher {
         this.modell = modell;
     }
 
-    public Fernseher(String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
+    public Fernseher(String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, LocalDate releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
         this.marke = marke;
         this.modell = modell;
         this.preis = preis;
@@ -52,7 +53,7 @@ public class Fernseher {
         this.nennleistung = nennleistung;
     }
 
-    public Fernseher(ObjectId fernseherId, String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
+    public Fernseher(ObjectId fernseherId, String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, LocalDate releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
         this.fernseherId = fernseherId;
         this.marke = marke;
         this.modell = modell;
@@ -139,11 +140,11 @@ public class Fernseher {
         this.gewicht = gewicht;
     }
 
-    public Date getReleaseDatum() {
+    public LocalDate getReleaseDatum() {
         return releaseDatum;
     }
 
-    public void setReleaseDatum(Date releaseDatum) {
+    public void setReleaseDatum(LocalDate releaseDatum) {
         this.releaseDatum = releaseDatum;
     }
 
