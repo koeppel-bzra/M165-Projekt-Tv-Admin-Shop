@@ -39,6 +39,14 @@ public class MainView extends JFrame {
     JButton btnDeleteFernseher = new JButton("Fernseher löschen");
     JButton btnUpdateFernseher = new JButton("Fernseher aktualisieren");
 
+    JButton btnAddKunden = new JButton("Kunden hinzufügen");
+    JButton btnDeleteKunden = new JButton("Kunden löschen");
+    JButton btnUpdateKunden = new JButton("Kunden aktualisieren");
+
+    // Labels für Buttons
+    JLabel lblFernseher = new JLabel("Fernseher");
+    JLabel lblKunden = new JLabel("Kunden");
+
     public MainView() {
         setSize(1000, 600);
         setTitle("TV-Verwaltung");
@@ -60,9 +68,15 @@ public class MainView extends JFrame {
     }
 
     public void Navigation() {
+        navPanel.add(lblFernseher);
         navPanel.add(btnAddFernseher);
         navPanel.add(btnUpdateFernseher);
         navPanel.add(btnDeleteFernseher);
+        navPanel.add(lblKunden);
+        navPanel.add(btnAddKunden);
+        navPanel.add(btnDeleteKunden);
+        navPanel.add(btnUpdateKunden);
+
         navPanel.setPreferredSize(new Dimension(200, 0));
     }
 
@@ -70,7 +84,6 @@ public class MainView extends JFrame {
         midPanel.setLayout(new BorderLayout());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Liste initial füllen
         refreshList();
 
         JScrollPane scrollPane = new JScrollPane(list);
@@ -138,6 +151,7 @@ public class MainView extends JFrame {
         btnUpdateFernseher.addActionListener(e -> fernseherView.showUpdateDialog());
     }
 
+    // Refresht die Liste und zeigt dann zum Beispiel gelöschte Items in der Datenbank nicht mehr an.
     public void refreshList() {
         listModel.clear();
         for (Fernseher f : controller.getAllFernseher()) {

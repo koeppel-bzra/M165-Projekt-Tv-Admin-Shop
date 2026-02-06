@@ -2,7 +2,7 @@ package model;
 
 public enum Pixelaufloesung {
     P720,
-    P1080,
-    P2160,
+    FULLHD_1080P,
+    UHD_4K,
     P4320
 }

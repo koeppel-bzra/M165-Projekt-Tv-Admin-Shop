@@ -1,12 +1,16 @@
 package model;
 
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
 import java.util.Date;
 
 public class Fernseher {
+
+    @BsonId
     private ObjectId fernseherId;
+
     private String marke;
     private String modell;
     private double preis;
@@ -26,7 +30,9 @@ public class Fernseher {
                 "Modell: " + modell + "\n";
     }
 
+    public Fernseher() {
 
+    }
 
     public Fernseher(ObjectId fernseherId, String marke, String modell) {
         this.marke = marke;

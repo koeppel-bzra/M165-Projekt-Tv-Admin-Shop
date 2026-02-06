@@ -117,8 +117,8 @@ public class FernseherView extends JFrame {
             f.setNennleistung(Integer.parseInt(txtNennleistung.getText()));
 
             controller.updateFernseher(f);
+            view.DetailList();
 
-            view.refreshList();
             dialog.dispose();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(dialog, "Ungültige Eingabe");
@@ -128,12 +128,12 @@ public class FernseherView extends JFrame {
     // Löschen
     public void deleteFernseherUI() {
         String selectedString = view.list.getSelectedValue();
+
         if (selectedString == null) {
             JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
-            return;
         }
 
-        Fernseher selected = null;
+        Fernseher selected = new Fernseher();
         for (Fernseher f : controller.getAllFernseher()) {
             if ((f.getMarke() + " - " + f.getModell()).equals(selectedString)) {
                 selected = f;
@@ -142,7 +142,8 @@ public class FernseherView extends JFrame {
         }
 
         if (selected != null) {
-            controller.deleteFernseher(selected, selected.getFernseherId());
+            controller.deleteFernseher(selected);
+
             view.refreshList();
             view.ClearDetailList();
         }
