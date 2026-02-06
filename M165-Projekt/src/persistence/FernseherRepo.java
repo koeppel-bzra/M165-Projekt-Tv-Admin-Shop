@@ -1,22 +1,25 @@
 package persistence;
 
 import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import model.Fernseher;
-import org.bson.Document;
 import com.mongodb.client.MongoDatabase;
+import model.Fernseher;
+import model.DisplayTechnologie;
+import model.Bildschirmaufloesung;
+import model.Pixelaufloesung;
+import org.bson.Document;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 
 public class FernseherRepo {
+
     MongoClient mongoClient = new MongoClient("localhost", 27017);
     MongoDatabase database = mongoClient.getDatabase("tvshop");
     MongoCollection<Document> collection = database.getCollection("fernseher");
 
+    // Hilfsmethoden für Safe Parsing
     private double getDoubleSafe(Document doc, String field) {
         Object value = doc.get(field);
         if (value == null) return 0.0;
@@ -36,18 +39,75 @@ public class FernseherRepo {
     }
 
 
+
+    // Null-sichere Enum-Konvertierung
+    private DisplayTechnologie getDisplayTechnologieSafe(Document doc) {
+        String value = doc.getString("displayTechnologie");
+        if (value == null) return DisplayTechnologie.LED; // Standardwert
+        try {
+            return DisplayTechnologie.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return DisplayTechnologie.LED; // Fallback, falls falscher Wert
+        }
+    }
+
+    private Bildschirmaufloesung getBildschirmAufloesungSafe(Document doc) {
+        String value = doc.getString("bildschirmAufloesung");
+        if (value == null) return Bildschirmaufloesung.HD;
+        try {
+            return Bildschirmaufloesung.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Bildschirmaufloesung.HD;
+        }
+    }
+
+    private Pixelaufloesung getPixelAufloesungSafe(Document doc) {
+        String value = doc.getString("pixelaufloesung");
+        if (value == null) return Pixelaufloesung.P720;
+        try {
+            return Pixelaufloesung.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Pixelaufloesung.P720;
+        }
+    }
+
+
+
+    // Mapping von Document zu Fernseher
+    private Fernseher fromDocument(Document doc) {
+        DisplayTechnologie display = getDisplayTechnologieSafe(doc);
+        Bildschirmaufloesung aufloesung = getBildschirmAufloesungSafe(doc);
+        Pixelaufloesung pixel = getPixelAufloesungSafe(doc);
+
+        return new Fernseher(
+                doc.getObjectId("_id"),
+                doc.getString("marke"),
+                doc.getString("modell"),
+                getDoubleSafe(doc, "preis"),
+                getIntegerSafe(doc, "bildschirmdiagonale"),
+                display,
+                aufloesung,
+                getIntegerSafe(doc, "bildwiederholfrequenz"),
+                getDoubleSafe(doc, "gewicht"),
+                doc.getDate("releasedatum"),
+                pixel,
+                getIntegerSafe(doc, "nennleistung")
+        );
+    }
+
+    // CRUD-Methoden
     public void addFernseher(Fernseher f) {
         Document document = new Document()
                 .append("marke", f.getMarke())
                 .append("modell", f.getModell())
                 .append("preis", f.getPreis())
                 .append("bildschirmdiagonale", f.getBildschirmdiagonale())
-                .append("displayTechnologie", f.getDisplayTechnologie())
-                .append("bildschirmAufloesung", f.getBildschirmAufloesung())
+                .append("displayTechnologie", f.getDisplayTechnologie().name())
+                .append("bildschirmAufloesung", f.getBildschirmAufloesung().name())
                 .append("bildwiederholfrequenz", f.getBildwiederholFrequenz())
                 .append("gewicht", f.getGewicht())
                 .append("releasedatum", f.getReleaseDatum())
-                .append("pixelaufloesung", f.getPixelaufloesung())
+                .append("pixelaufloesung", f.getPixelaufloesung().name())
                 .append("nennleistung", f.getNennleistung());
 
         collection.insertOne(document);
@@ -58,22 +118,8 @@ public class FernseherRepo {
     public List<Fernseher> getAll() {
         List<Fernseher> result = new ArrayList<>();
         for (Document doc : collection.find()) {
-            result.add(new Fernseher(
-                    doc.getObjectId("_id"),
-                    doc.getString("marke"),
-                    doc.getString("modell"),
-                    getDoubleSafe(doc, "preis"),
-                    getIntegerSafe(doc, "bildschirmdiagonale"),
-                    doc.getString("displayTechnologie"),
-                    doc.getString("bildschirmAufloesung"),
-                    getIntegerSafe(doc, "bildwiederholfrequenz"),
-                    getDoubleSafe(doc, "gewicht"),
-                    doc.getDate("releasedatum"),
-                    doc.getString("pixelaufloesung"),
-                    getIntegerSafe(doc, "nennleistung")
-            ));
+            result.add(fromDocument(doc));
         }
         return result;
     }
-
 }

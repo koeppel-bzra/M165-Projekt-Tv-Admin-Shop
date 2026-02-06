@@ -2,7 +2,11 @@ package view;
 
 import com.sun.tools.javac.Main;
 import controller.FernseherController;
+import model.Bildschirmaufloesung;
+import model.DisplayTechnologie;
 import model.Fernseher;
+import model.Pixelaufloesung;
+import org.bson.Document;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,9 +34,9 @@ public class FernseherView extends JFrame {
     JLabel lblBildschirmdiagonale = new JLabel("Bildschirmdiagonale");
     JTextField txtBildschirmdiagonale = new JTextField();
     JLabel lblDisplaytechnologie = new JLabel("Displaytechnologie");
-    JTextField txtDisplaytechnologie = new JTextField();
+    JComboBox<DisplayTechnologie> cmbDisplaytechnologie = new JComboBox<>(DisplayTechnologie.values());
     JLabel lblBildschirmaufloesung = new JLabel("Bildschirmauflösung");
-    JTextField txtBildschirmaufloesung = new JTextField();
+    JComboBox<Bildschirmaufloesung> cmbBildschirmaufloesung = new JComboBox<>(Bildschirmaufloesung.values());
     JLabel lblBildwiederholfrequenz = new JLabel("Bildwiederholfrequenz");
     JTextField txtBildwederholfrequenz = new JTextField();
     JLabel lblGewicht = new JLabel("Gewicht");
@@ -40,7 +44,7 @@ public class FernseherView extends JFrame {
     JLabel lblReleasedatum = new JLabel("Releasedatum");
     JTextField txtReleasedatum = new JTextField();
     JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
-    JTextField txtPixelaufloesung = new JTextField();
+    JComboBox<Pixelaufloesung> cmbPixelaufloesung = new JComboBox<>(Pixelaufloesung.values());
     JLabel lblNennleistung = new JLabel("Nennleistung");
     JTextField txtNennleistung = new JTextField();
 
@@ -76,9 +80,9 @@ public class FernseherView extends JFrame {
         dialog.add(lblBildschirmdiagonale);
         dialog.add(txtBildschirmdiagonale);
         dialog.add(lblDisplaytechnologie);
-        dialog.add(txtDisplaytechnologie);
+        dialog.add(cmbDisplaytechnologie);
         dialog.add(lblBildschirmaufloesung);
-        dialog.add(txtBildschirmaufloesung);
+        dialog.add(cmbBildschirmaufloesung);
         dialog.add(lblBildwiederholfrequenz);
         dialog.add(txtBildwederholfrequenz);
         dialog.add(lblGewicht);
@@ -86,7 +90,7 @@ public class FernseherView extends JFrame {
         dialog.add(lblReleasedatum);
         dialog.add(txtReleasedatum);
         dialog.add(lblPixelaufloesung);
-        dialog.add(txtPixelaufloesung);
+        dialog.add(cmbPixelaufloesung);
         dialog.add(lblNennleistung);
         dialog.add(txtNennleistung);
 
@@ -98,41 +102,67 @@ public class FernseherView extends JFrame {
     public void addFernseherUI() {
         btnAdd.addActionListener(e -> {
 
-            String marke = txtMarke.getText();
-            String modell = txtModell.getText();
-            double preis = Double.parseDouble(txtPreis.getText());
-            int bildschirmdiagonale = Integer.parseInt(txtBildschirmdiagonale.getText());
-            String displayTechnologie = txtDisplaytechnologie.getText();
-            String bildschirmAufloesung = txtBildschirmaufloesung.getText();
-            int bildwiederholfrequenz = Integer.parseInt(txtBildwederholfrequenz.getText());
-            double gewicht = Double.parseDouble(txtGewicht.getText());
-            String releasedatumString = txtReleasedatum.getText();
-
-            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-
-            Date releaseDatum = null;
-
             try {
-                releaseDatum = formatter.parse(releasedatumString);
+                String marke = txtMarke.getText();
+                String modell = txtModell.getText();
+                double preis = Double.parseDouble(txtPreis.getText());
+                int bildschirmdiagonale = Integer.parseInt(txtBildschirmdiagonale.getText());
+
+                DisplayTechnologie displayTechnologie = (DisplayTechnologie) cmbDisplaytechnologie.getSelectedItem();
+                Bildschirmaufloesung bildschirmAufloesung = (Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem();
+                int bildwiederholfrequenz = Integer.parseInt(txtBildwederholfrequenz.getText());
+                double gewicht = Double.parseDouble(txtGewicht.getText());
+
+                String releasedatumString = txtReleasedatum.getText();
+                SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+                Date releaseDatum = formatter.parse(releasedatumString);
+
+                Pixelaufloesung pixelAufloesung = (Pixelaufloesung) cmbPixelaufloesung.getSelectedItem();
+                int nennleistung = Integer.parseInt(txtNennleistung.getText());
+
+                // Fernseher-Objekt erstellen
+                Fernseher f = new Fernseher(marke, modell, preis, bildschirmdiagonale, displayTechnologie,
+                        bildschirmAufloesung, bildwiederholfrequenz,
+                        gewicht, releaseDatum, pixelAufloesung, nennleistung);
+
+                // Zur DB hinzufügen
+                controller.addFernseher(f);
+
+                // In die List anzeigen
+                view.listModel.addElement(f.getMarke() + " - " + f.getModell());
+
+                // Optional: Dialog schließen
+                dialog.dispose();
+
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(dialog, "Bitte gültige Werte eingeben");
+
             } catch (ParseException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Bitte ein korrektes Datum eingeben (TT.MM.JJJJ)");
-                dialog.dispose();
+                JOptionPane.showMessageDialog(dialog, "Bitte ein korrektes Datum eingeben (TT.MM.JJJJ)");
             }
 
-            String pixelaufloesung = txtPixelaufloesung.getText();
-            int nennleistung = Integer.parseInt(txtNennleistung.getText());
-
-
-            Fernseher f = new Fernseher(marke, modell, preis, bildschirmdiagonale, displayTechnologie,
-                                        bildschirmAufloesung, bildwiederholfrequenz,
-                                        gewicht, releaseDatum, pixelaufloesung, nennleistung);
-
-            controller.addFernseher(f);
-
-            view.listModel.addElement(f.getMarke() + " - " + f.getModell());
-
-            dialog.dispose();
         });
     }
+
+
+    private DisplayTechnologie getDisplayTechnologieSafe(Document doc) {
+        String value = doc.getString("displayTechnologie");
+        if (value == null) return DisplayTechnologie.LED; // Standardwert
+        return DisplayTechnologie.valueOf(value.toUpperCase());
+    }
+
+    private Bildschirmaufloesung getBildschirmAufloesungSafe(Document doc) {
+        String value = doc.getString("bildschirmAufloesung");
+        if (value == null) return Bildschirmaufloesung.HD;
+        return Bildschirmaufloesung.valueOf(value.toUpperCase());
+    }
+
+    private Pixelaufloesung getPixelAufloesungSafe(Document doc) {
+        String value = doc.getString("pixelaufloesung");
+        if (value == null) return Pixelaufloesung.P720;
+        return Pixelaufloesung.valueOf(value.toUpperCase());
+    }
+
 }

@@ -101,7 +101,7 @@ public class MainView extends JFrame {
         detailPanel.add(lblReleasedatum);
         detailPanel.add(lblPixelaufloesung);
         detailPanel.add(lblNennleistung);
-        detailPanel.setPreferredSize(new Dimension(500, 0));
+        detailPanel.setPreferredSize(new Dimension(300, 0));
     }
 
     public void DetailList() {
@@ -111,7 +111,7 @@ public class MainView extends JFrame {
 
             lblMarke.setText("Marke: " + f.getMarke());
             lblModell.setText("Modell: " + f.getModell());
-            lblPreis.setText("Preis: " + f.getPreis());
+            lblPreis.setText("Preis: " + f.getPreis() + " CHF");
             lblBildschirmdiagonale.setText("Bildschirmdiagonale: " + f.getBildschirmdiagonale());
             lblDisplaytechnologie.setText("Displaytechnologie: " + f.getDisplayTechnologie());
             lblBildschirmaufloesung.setText("Bildschirmauflösung: " + f.getBildschirmAufloesung());

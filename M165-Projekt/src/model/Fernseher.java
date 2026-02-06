@@ -10,12 +10,12 @@ public class Fernseher {
     private String modell;
     private double preis;
     private int bildschirmdiagonale;
-    private String displayTechnologie;
-    private String bildschirmAufloesung;
+    private DisplayTechnologie displayTechnologie;
+    private Bildschirmaufloesung bildschirmAufloesung;
     private int bildwiederholFrequenz;
     private double gewicht;
     private Date releaseDatum;
-    private String pixelaufloesung;
+    private Pixelaufloesung pixelaufloesung;
     private int nennleistung;
 
     @Override
@@ -38,7 +38,7 @@ public class Fernseher {
         this.modell = modell;
     }
 
-    public Fernseher(String marke, String modell, double preis, int bildschirmdiagonale, String displayTechnologie, String bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, String pixelaufloesung, int nennleistung) {
+    public Fernseher(String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
         this.marke = marke;
         this.modell = modell;
         this.preis = preis;
@@ -52,7 +52,7 @@ public class Fernseher {
         this.nennleistung = nennleistung;
     }
 
-    public Fernseher(ObjectId fernseherId, String marke, String modell, double preis, int bildschirmdiagonale, String displayTechnologie, String bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, String pixelaufloesung, int nennleistung) {
+    public Fernseher(ObjectId fernseherId, String marke, String modell, double preis, int bildschirmdiagonale, DisplayTechnologie displayTechnologie, Bildschirmaufloesung bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, Pixelaufloesung pixelaufloesung, int nennleistung) {
         this.fernseherId = fernseherId;
         this.marke = marke;
         this.modell = modell;
@@ -107,19 +107,19 @@ public class Fernseher {
         this.bildschirmdiagonale = bildschirmdiagonale;
     }
 
-    public String getDisplayTechnologie() {
+    public DisplayTechnologie getDisplayTechnologie() {
         return displayTechnologie;
     }
 
-    public void setDisplayTechnologie(String displayTechnologie) {
+    public void setDisplayTechnologie(DisplayTechnologie displayTechnologie) {
         this.displayTechnologie = displayTechnologie;
     }
 
-    public String getBildschirmAufloesung() {
+    public Bildschirmaufloesung getBildschirmAufloesung() {
         return bildschirmAufloesung;
     }
 
-    public void setBildschirmAufloesung(String bildschirmAufloesung) {
+    public void setBildschirmAufloesung(Bildschirmaufloesung bildschirmAufloesung) {
         this.bildschirmAufloesung = bildschirmAufloesung;
     }
 
@@ -147,11 +147,11 @@ public class Fernseher {
         this.releaseDatum = releaseDatum;
     }
 
-    public String getPixelaufloesung() {
+    public Pixelaufloesung getPixelaufloesung() {
         return pixelaufloesung;
     }
 
-    public void setPixelaufloesung(String pixelaufloesung) {
+    public void setPixelaufloesung(Pixelaufloesung pixelaufloesung) {
         this.pixelaufloesung = pixelaufloesung;
     }
 
