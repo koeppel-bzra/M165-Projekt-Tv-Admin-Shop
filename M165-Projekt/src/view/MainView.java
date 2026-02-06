@@ -21,9 +21,18 @@ public class MainView extends JFrame {
     DefaultListModel<String> listModel = new DefaultListModel<>();
     JList<String> list = new JList<>(listModel);
 
-    // Detail Labels
+    // Detail Labels Bildschirm
     JLabel lblMarke = new JLabel("Marke: ");
     JLabel lblModell = new JLabel("Modell: ");
+    JLabel lblPreis = new JLabel("Preis: ");
+    JLabel lblBildschirmdiagonale = new JLabel("Bildschirmdiagonale: ");
+    JLabel lblDisplaytechnologie = new JLabel("Displaytechnologie: ");
+    JLabel lblBildschirmaufloesung = new JLabel("Bildschirmauflösung: ");
+    JLabel lblBildwiederholfrequenz = new JLabel("Bildwiederholfrequenz: ");
+    JLabel lblGewicht = new JLabel("Gewicht: ");
+    JLabel lblReleasedatum = new JLabel("Releasedatum: ");
+    JLabel lblPixelaufloesung = new JLabel("Pixelauflösung: ");
+    JLabel lblNennleistung = new JLabel("Nennleistung: ");
 
     // Buttons
     JButton btnAddFernseher = new JButton("Fernseher hinzufügen");
@@ -48,6 +57,7 @@ public class MainView extends JFrame {
 
         setVisible(true);
     }
+
 
 
     public void Navigation() {
@@ -79,19 +89,38 @@ public class MainView extends JFrame {
 
 
     public void DetailPanel() {
-        detailPanel.setLayout(new GridLayout(2,1,5,5));
+        detailPanel.setLayout(new GridLayout(0,1,5,5));
         detailPanel.add(lblMarke);
         detailPanel.add(lblModell);
-        detailPanel.setPreferredSize(new Dimension(200, 0));
+        detailPanel.add(lblPreis);
+        detailPanel.add(lblBildschirmdiagonale);
+        detailPanel.add(lblDisplaytechnologie);
+        detailPanel.add(lblBildschirmaufloesung);
+        detailPanel.add(lblBildwiederholfrequenz);
+        detailPanel.add(lblGewicht);
+        detailPanel.add(lblReleasedatum);
+        detailPanel.add(lblPixelaufloesung);
+        detailPanel.add(lblNennleistung);
+        detailPanel.setPreferredSize(new Dimension(500, 0));
     }
 
     public void DetailList() {
         int index = list.getSelectedIndex();
         if (index >= 0) {
-            String item = listModel.get(index);
-            String[] parts = item.split(" - ");
-            lblMarke.setText("Marke: " + parts[0]);
-            lblModell.setText("Modell: " + parts[1]);
+            Fernseher f = controller.getAllFernseher().get(index);
+
+            lblMarke.setText("Marke: " + f.getMarke());
+            lblModell.setText("Modell: " + f.getModell());
+            lblPreis.setText("Preis: " + f.getPreis());
+            lblBildschirmdiagonale.setText("Bildschirmdiagonale: " + f.getBildschirmdiagonale());
+            lblDisplaytechnologie.setText("Displaytechnologie: " + f.getDisplayTechnologie());
+            lblBildschirmaufloesung.setText("Bildschirmauflösung: " + f.getBildschirmAufloesung());
+            lblBildwiederholfrequenz.setText("Bildwiederholfrequenz: " + f.getBildwiederholFrequenz());
+            lblGewicht.setText("Gewicht: " + f.getGewicht());
+            lblReleasedatum.setText("Releasedatum: " + f.getReleaseDatum());
+            lblPixelaufloesung.setText("Pixelauflösung: " + f.getPixelaufloesung());
+            lblNennleistung.setText("Nennleistung: " + f.getNennleistung());
+
         }
     }
 

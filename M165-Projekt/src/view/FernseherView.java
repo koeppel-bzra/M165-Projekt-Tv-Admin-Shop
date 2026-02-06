@@ -6,6 +6,9 @@ import model.Fernseher;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class FernseherView extends JFrame {
 
@@ -39,7 +42,9 @@ public class FernseherView extends JFrame {
     JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
     JTextField txtPixelaufloesung = new JTextField();
     JLabel lblNennleistung = new JLabel("Nennleistung");
-    JTextField txtNennlesitung = new JTextField();
+    JTextField txtNennleistung = new JTextField();
+
+
 
     JLabel lblWhiteSpace = new JLabel();
 
@@ -83,7 +88,7 @@ public class FernseherView extends JFrame {
         dialog.add(lblPixelaufloesung);
         dialog.add(txtPixelaufloesung);
         dialog.add(lblNennleistung);
-        dialog.add(txtNennlesitung);
+        dialog.add(txtNennleistung);
 
         dialog.add(lblWhiteSpace);
 
@@ -95,8 +100,33 @@ public class FernseherView extends JFrame {
 
             String marke = txtMarke.getText();
             String modell = txtModell.getText();
+            double preis = Double.parseDouble(txtPreis.getText());
+            int bildschirmdiagonale = Integer.parseInt(txtBildschirmdiagonale.getText());
+            String displayTechnologie = txtDisplaytechnologie.getText();
+            String bildschirmAufloesung = txtBildschirmaufloesung.getText();
+            int bildwiederholfrequenz = Integer.parseInt(txtBildwederholfrequenz.getText());
+            double gewicht = Double.parseDouble(txtGewicht.getText());
+            String releasedatumString = txtReleasedatum.getText();
 
-            Fernseher f = new Fernseher(marke, modell);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+
+            Date releaseDatum = null;
+
+            try {
+                releaseDatum = formatter.parse(releasedatumString);
+            } catch (ParseException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Bitte ein korrektes Datum eingeben (TT.MM.JJJJ)");
+                dialog.dispose();
+            }
+
+            String pixelaufloesung = txtPixelaufloesung.getText();
+            int nennleistung = Integer.parseInt(txtNennleistung.getText());
+
+
+            Fernseher f = new Fernseher(marke, modell, preis, bildschirmdiagonale, displayTechnologie,
+                                        bildschirmAufloesung, bildwiederholfrequenz,
+                                        gewicht, releaseDatum, pixelaufloesung, nennleistung);
 
             controller.addFernseher(f);
 

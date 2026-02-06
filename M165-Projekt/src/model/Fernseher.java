@@ -38,6 +38,35 @@ public class Fernseher {
         this.modell = modell;
     }
 
+    public Fernseher(String marke, String modell, double preis, int bildschirmdiagonale, String displayTechnologie, String bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, String pixelaufloesung, int nennleistung) {
+        this.marke = marke;
+        this.modell = modell;
+        this.preis = preis;
+        this.bildschirmdiagonale = bildschirmdiagonale;
+        this.displayTechnologie = displayTechnologie;
+        this.bildschirmAufloesung = bildschirmAufloesung;
+        this.bildwiederholFrequenz = bildwiederholFrequenz;
+        this.gewicht = gewicht;
+        this.releaseDatum = releaseDatum;
+        this.pixelaufloesung = pixelaufloesung;
+        this.nennleistung = nennleistung;
+    }
+
+    public Fernseher(ObjectId fernseherId, String marke, String modell, double preis, int bildschirmdiagonale, String displayTechnologie, String bildschirmAufloesung, int bildwiederholFrequenz, double gewicht, Date releaseDatum, String pixelaufloesung, int nennleistung) {
+        this.fernseherId = fernseherId;
+        this.marke = marke;
+        this.modell = modell;
+        this.preis = preis;
+        this.bildschirmdiagonale = bildschirmdiagonale;
+        this.displayTechnologie = displayTechnologie;
+        this.bildschirmAufloesung = bildschirmAufloesung;
+        this.bildwiederholFrequenz = bildwiederholFrequenz;
+        this.gewicht = gewicht;
+        this.releaseDatum = releaseDatum;
+        this.pixelaufloesung = pixelaufloesung;
+        this.nennleistung = nennleistung;
+    }
+
     public ObjectId getFernseherId() {
         return fernseherId;
     }
