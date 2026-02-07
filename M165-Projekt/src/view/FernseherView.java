@@ -8,9 +8,19 @@ import model.Pixelaufloesung;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionListener;
+
+import org.jdatepicker.JDatePanel;
+import org.jdatepicker.JDatePicker;
+import org.jdatepicker.impl.*;
+
+import java.util.Date;
+import java.util.Properties;
+import java.time.ZoneId;
+
 
 public class FernseherView extends JFrame {
 
@@ -35,7 +45,10 @@ public class FernseherView extends JFrame {
     private JLabel lblGewicht = new JLabel("Gewicht [kg]");
     private JTextField txtGewicht = new JTextField();
     private JLabel lblReleasedatum = new JLabel("Releasedatum");
-    private JTextField txtReleasedatum = new JTextField();
+
+    private UtilDateModel dateModel = new UtilDateModel();
+    private JDatePickerImpl datePicker;
+
     private JLabel lblPixelaufloesung = new JLabel("Pixelauflösung");
     private JComboBox<Pixelaufloesung> cmbPixelaufloesung = new JComboBox<>(Pixelaufloesung.values());
     private JLabel lblNennleistung = new JLabel("Nennleistung [w]");
@@ -48,6 +61,16 @@ public class FernseherView extends JFrame {
     public FernseherView(MainView view, FernseherController controller) {
         this.view = view;
         this.controller = controller;
+
+        dateModel.setSelected(true);
+
+        Properties p = new Properties();
+        p.put("text.today", "Heute");
+        p.put("text.month", "Monat");
+        p.put("text.year", "Jahr");
+
+        JDatePanelImpl datePanel = new JDatePanelImpl(dateModel, p);
+        datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
     }
 
 
@@ -72,6 +95,8 @@ public class FernseherView extends JFrame {
             dialog.dispose();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(dialog, "Bitte gültige Werte eingeben");
+        } catch (DateTimeException ex) {
+            JOptionPane.showMessageDialog(dialog, "Bitte das Datum nach diesem Format eingaben: [dd.MM.yyy]");
         }
     }
 
@@ -112,7 +137,12 @@ public class FernseherView extends JFrame {
             f.setBildschirmAufloesung((Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem());
             f.setBildwiederholFrequenz(Integer.parseInt(txtBildwederholfrequenz.getText()));
             f.setGewicht(Double.parseDouble(txtGewicht.getText()));
-            f.setReleaseDatum(LocalDate.parse(txtReleasedatum.getText(), DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            f.setReleaseDatum(
+                    LocalDate.ofInstant(
+                            ((Date) datePicker.getModel().getValue()).toInstant(),
+                            ZoneId.systemDefault()
+                    )
+            );
             f.setPixelaufloesung((Pixelaufloesung) cmbPixelaufloesung.getSelectedItem());
             f.setNennleistung(Integer.parseInt(txtNennleistung.getText()));
 
@@ -131,6 +161,7 @@ public class FernseherView extends JFrame {
 
         if (selectedString == null) {
             JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
+            return;
         }
 
         Fernseher selected = new Fernseher();
@@ -142,10 +173,23 @@ public class FernseherView extends JFrame {
         }
 
         if (selected != null) {
-            controller.deleteFernseher(selected);
 
-            view.refreshList();
-            view.ClearDetailList();
+            int result= JOptionPane.showConfirmDialog(
+                    view,
+                    "Möchtest du den Fernseher wirklich löschen?",
+                    "Löschen bestätigen",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (result == JOptionPane.YES_OPTION) {
+                controller.deleteFernseher(selected);
+                view.refreshList();
+                view.ClearDetailList();
+            }
+
+            else if (result == JOptionPane.NO_OPTION) {
+                return;
+            }
         }
     }
 
@@ -173,7 +217,7 @@ public class FernseherView extends JFrame {
         dialog.add(lblGewicht);
         dialog.add(txtGewicht);
         dialog.add(lblReleasedatum);
-        dialog.add(txtReleasedatum);
+        dialog.add(datePicker);
         dialog.add(lblPixelaufloesung);
         dialog.add(cmbPixelaufloesung);
         dialog.add(lblNennleistung);
@@ -191,7 +235,7 @@ public class FernseherView extends JFrame {
         txtBildschirmdiagonale.setText("");
         txtBildwederholfrequenz.setText("");
         txtGewicht.setText("");
-        txtReleasedatum.setText("");
+        dateModel.setValue(null);
         txtNennleistung.setText("");
     }
 
@@ -204,7 +248,13 @@ public class FernseherView extends JFrame {
         cmbBildschirmaufloesung.setSelectedItem(f.getBildschirmAufloesung());
         txtBildwederholfrequenz.setText(String.valueOf(f.getBildwiederholFrequenz()));
         txtGewicht.setText(String.valueOf(f.getGewicht()));
-        txtReleasedatum.setText(f.getReleaseDatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        dateModel.setValue(
+                Date.from(
+                        f.getReleaseDatum()
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant()
+                )
+        );
         cmbPixelaufloesung.setSelectedItem(f.getPixelaufloesung());
         txtNennleistung.setText(String.valueOf(f.getNennleistung()));
     }
@@ -219,7 +269,11 @@ public class FernseherView extends JFrame {
                 (Bildschirmaufloesung) cmbBildschirmaufloesung.getSelectedItem(),
                 Integer.parseInt(txtBildwederholfrequenz.getText()),
                 Double.parseDouble(txtGewicht.getText()),
-                LocalDate.parse(txtReleasedatum.getText(), DateTimeFormatter.ofPattern("dd.MM.yyyy")),
+                LocalDate.ofInstant(
+                        ((Date) datePicker.getModel().getValue()).toInstant(),
+                        ZoneId.systemDefault()
+                ),
+
                 (Pixelaufloesung) cmbPixelaufloesung.getSelectedItem(),
                 Integer.parseInt(txtNennleistung.getText())
         );
