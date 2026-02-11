@@ -64,6 +64,7 @@ public class MainView extends JFrame {
     JLabel lblEmail = new JLabel("Email: ");
     JLabel lblGeburtsdatum = new JLabel("Geburtsdatum: ");
     JLabel lblUsername = new JLabel("Benutzername: ");
+    JLabel lblPassword = new JLabel("Passwort: ");
 
 
     // Bestellungen Elemente
@@ -139,6 +140,7 @@ public class MainView extends JFrame {
         kundenDetailPanel.add(lblEmail);
         kundenDetailPanel.add(lblGeburtsdatum);
         kundenDetailPanel.add(lblUsername);
+        kundenDetailPanel.add(lblPassword);
         kundenDetailPanel.setPreferredSize(new Dimension(300, 0));
 
         kundenPanel.add(kundenDetailPanel, BorderLayout.EAST);
@@ -244,6 +246,7 @@ public class MainView extends JFrame {
             lblEmail.setText("Email: ");
             lblGeburtsdatum.setText("Geburtsdatum: ");
             lblUsername.setText("Benutzername: ");
+            lblPassword.setText("Passwort: ");
             return;
         }
 
@@ -257,6 +260,7 @@ public class MainView extends JFrame {
             lblEmail.setText("Email: " + k.getEmail());
             lblGeburtsdatum.setText("Geburtsdatum: " + k.getGeburtsdatum());
             lblUsername.setText("Benutzername: " + k.getUsername());
+            lblPassword.setText("Passwort: " + kundenView.hashPassword(k.getPassword()));
         }
     }
 
