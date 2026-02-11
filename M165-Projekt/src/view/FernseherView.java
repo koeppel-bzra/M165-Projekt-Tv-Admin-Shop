@@ -91,7 +91,7 @@ public class FernseherView extends JFrame {
         try {
             Fernseher f = buildFernseherFromFields();
             controller.addFernseher(f);
-            view.refreshList();
+            view.refreshFernseherList();
             dialog.dispose();
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(dialog, "Bitte gültige Werte eingeben");
@@ -102,7 +102,7 @@ public class FernseherView extends JFrame {
 
     // Dialog für das Updaten
     public void showUpdateDialog() {
-        String selectedString = view.list.getSelectedValue();
+        String selectedString = view.fernseherList.getSelectedValue();
         if (selectedString == null) {
             JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
             return;
@@ -147,7 +147,8 @@ public class FernseherView extends JFrame {
             f.setNennleistung(Integer.parseInt(txtNennleistung.getText()));
 
             controller.updateFernseher(f);
-            view.DetailList();
+            view.updateFernseherDetails();
+            view.refreshFernseherList();
 
             dialog.dispose();
         } catch (NumberFormatException ex) {
@@ -157,7 +158,7 @@ public class FernseherView extends JFrame {
 
     // Löschen
     public void deleteFernseherUI() {
-        String selectedString = view.list.getSelectedValue();
+        String selectedString = view.fernseherList.getSelectedValue();
 
         if (selectedString == null) {
             JOptionPane.showMessageDialog(view, "Kein Fernseher ausgewählt");
@@ -183,8 +184,8 @@ public class FernseherView extends JFrame {
 
             if (result == JOptionPane.YES_OPTION) {
                 controller.deleteFernseher(selected);
-                view.refreshList();
-                view.ClearDetailList();
+                view.refreshFernseherList();
+                view.updateFernseherDetails();
             }
 
             else if (result == JOptionPane.NO_OPTION) {

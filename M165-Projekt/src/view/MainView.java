@@ -1,27 +1,37 @@
 package view;
 
 import controller.FernseherController;
+import controller.KundenController;
+import controller.ProdukteController;
 import model.Fernseher;
+import model.Kunde;
+import model.Produkt;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainView extends JFrame {
 
-    FernseherController controller = new FernseherController();
-    FernseherView fernseherView = new FernseherView(this, controller);
+    // Controller
+    FernseherController fernseherController = new FernseherController();
+    KundenController kundenController = new KundenController();
+    ProdukteController produkteController = new ProdukteController();
 
-    // Panels
-    JPanel panel = new JPanel(new BorderLayout());
-    JPanel navPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-    JPanel midPanel = new JPanel();
-    JPanel detailPanel = new JPanel();
+    FernseherView fernseherView = new FernseherView(this, fernseherController);
 
-    // Liste
-    DefaultListModel<String> listModel = new DefaultListModel<>();
-    JList<String> list = new JList<>(listModel);
+    JTabbedPane tabbedPane = new JTabbedPane();
 
-    // Detail Labels
+    // Fernseher Elemente
+    JPanel fernseherPanel = new JPanel(new BorderLayout());
+    JPanel fernseherNavPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+    JPanel fernseherDetailPanel = new JPanel(new GridLayout(0, 1, 5, 5));
+    DefaultListModel<String> fernseherListModel = new DefaultListModel<>();
+    JList<String> fernseherList = new JList<>(fernseherListModel);
+
+    JButton btnAddFernseher = new JButton("Hinzufügen");
+    JButton btnUpdateFernseher = new JButton("Aktualisieren");
+    JButton btnDeleteFernseher = new JButton("Löschen");
+
     JLabel lblMarke = new JLabel("Marke: ");
     JLabel lblModell = new JLabel("Modell: ");
     JLabel lblPreis = new JLabel("Preis: ");
@@ -34,89 +44,148 @@ public class MainView extends JFrame {
     JLabel lblPixelaufloesung = new JLabel("Pixelauflösung: ");
     JLabel lblNennleistung = new JLabel("Nennleistung: ");
 
-    // Buttons
-    JButton btnAddFernseher = new JButton("Fernseher hinzufügen");
-    JButton btnDeleteFernseher = new JButton("Fernseher löschen");
-    JButton btnUpdateFernseher = new JButton("Fernseher aktualisieren");
 
-    JButton btnAddKunden = new JButton("Kunden hinzufügen");
-    JButton btnDeleteKunden = new JButton("Kunden löschen");
-    JButton btnUpdateKunden = new JButton("Kunden aktualisieren");
+    // Kunden Elemente
+    JPanel kundenPanel = new JPanel(new BorderLayout());
+    JPanel kundenNavPanel = new JPanel(new GridLayout(0,1,5,5));
+    JPanel kundenDetailPanel = new JPanel(new GridLayout(0, 1, 5 ,5));
+    DefaultListModel<String> kundenListModel = new DefaultListModel<>();
+    JList<String> kundenList = new JList<>(kundenListModel);
 
-    // Labels für Buttons
-    JLabel lblFernseher = new JLabel("Fernseher");
-    JLabel lblKunden = new JLabel("Kunden");
+    JButton btnAddKunden = new JButton("Hinzufügen");
+    JButton btnUpdateKunden = new JButton("Aktualisieren");
+    JButton btnDeleteKunden = new JButton("Löschen");
+
+    JLabel lblAnrede = new JLabel("Anrede: ");
+    JLabel lblNachname = new JLabel("Nachname: ");
+    JLabel lblVorname = new JLabel("Vorname: ");
+    JLabel lblTelefonPrivat = new JLabel("Telefon Privat: ");
+    JLabel lblTelefonMobile = new JLabel("Telefon Mobile: ");
+    JLabel lblEmail = new JLabel("Email: ");
+    JLabel lblGeburtsdatum = new JLabel("Geburtsdatum: ");
+    JLabel lblUsername = new JLabel("Benutzername: ");
+
+
+    // Produkte Elemente
+    JPanel produktePanel = new JPanel(new BorderLayout());
+    JPanel produkteNavPanel = new JPanel(new GridLayout(0,1,5,5));
+    DefaultListModel<String> produkteListModel = new DefaultListModel<>();
+    JList<String> produkteList = new JList<>(produkteListModel);
+
+    JButton btnAddProdukte = new JButton("Hinzufügen");
+    JButton btnUpdateProdukte = new JButton("Aktualisieren");
+    JButton btnDeleteProdukte = new JButton("Löschen");
 
     public MainView() {
         setSize(1000, 600);
-        setTitle("TV-Verwaltung");
+        setTitle("Tv-Shop");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Panel Aufbau
-        panel.add(navPanel, BorderLayout.WEST);
-        panel.add(midPanel, BorderLayout.CENTER);
-        panel.add(detailPanel, BorderLayout.EAST);
-        add(panel);
+        // Fernseher aufbauen
+        fernseherNavPanel.add(btnAddFernseher);
+        fernseherNavPanel.add(btnUpdateFernseher);
+        fernseherNavPanel.add(btnDeleteFernseher);
+        fernseherNavPanel.setPreferredSize(new Dimension(200, 0));
 
-        Navigation();
-        MidPanel();
-        DetailPanel();
-        ButtonActions();
+        JScrollPane fernseherScroll = new JScrollPane(fernseherList);
+        fernseherPanel.add(fernseherNavPanel, BorderLayout.WEST);
+        fernseherPanel.add(fernseherScroll, BorderLayout.CENTER);
 
+        fernseherDetailPanel.add(lblMarke);
+        fernseherDetailPanel.add(lblModell);
+        fernseherDetailPanel.add(lblPreis);
+        fernseherDetailPanel.add(lblBildschirmdiagonale);
+        fernseherDetailPanel.add(lblDisplaytechnologie);
+        fernseherDetailPanel.add(lblBildschirmaufloesung);
+        fernseherDetailPanel.add(lblBildwiederholfrequenz);
+        fernseherDetailPanel.add(lblGewicht);
+        fernseherDetailPanel.add(lblReleasedatum);
+        fernseherDetailPanel.add(lblPixelaufloesung);
+        fernseherDetailPanel.add(lblNennleistung);
+        fernseherDetailPanel.setPreferredSize(new Dimension(300, 0));
+
+        fernseherPanel.add(fernseherDetailPanel, BorderLayout.EAST);
+
+        // Listener für Liste
+        fernseherList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) updateFernseherDetails();
+        });
+
+
+        // Kunden Aufbau
+        kundenNavPanel.add(btnAddKunden);
+        kundenNavPanel.add(btnUpdateKunden);
+        kundenNavPanel.add(btnDeleteKunden);
+        kundenNavPanel.setPreferredSize(new Dimension(200, 0));
+
+        JScrollPane kundenScroll = new JScrollPane(kundenList);
+        kundenPanel.add(kundenNavPanel, BorderLayout.WEST);
+        kundenPanel.add(kundenScroll, BorderLayout.CENTER);
+
+        kundenDetailPanel.add(lblAnrede);
+        kundenDetailPanel.add(lblNachname);
+        kundenDetailPanel.add(lblVorname);
+        kundenDetailPanel.add(lblTelefonPrivat);
+        kundenDetailPanel.add(lblTelefonMobile);
+        kundenDetailPanel.add(lblEmail);
+        kundenDetailPanel.add(lblGeburtsdatum);
+        kundenDetailPanel.add(lblUsername);
+        kundenDetailPanel.setPreferredSize(new Dimension(300, 0));
+
+        kundenPanel.add(kundenDetailPanel, BorderLayout.EAST);
+
+
+        // Produkte Aufbau
+        produkteNavPanel.add(btnAddProdukte);
+        produkteNavPanel.add(btnUpdateProdukte);
+        produkteNavPanel.add(btnDeleteProdukte);
+        produkteNavPanel.setPreferredSize(new Dimension(200, 0));
+
+        JScrollPane produkteScroll = new JScrollPane(produkteList);
+        produktePanel.add(produkteNavPanel, BorderLayout.WEST);
+        produktePanel.add(produkteScroll, BorderLayout.CENTER);
+
+
+        // Tabs hinzufügen
+        tabbedPane.addTab("Fernseher", fernseherPanel);
+        tabbedPane.addTab("Kunden", kundenPanel);
+        tabbedPane.addTab("Produkte", produktePanel);
+        add(tabbedPane);
+
+
+        // ActionListener für Fernseher
+        btnAddFernseher.addActionListener(e -> {
+            fernseherView.showAddDialog();
+        });
+
+        btnUpdateFernseher.addActionListener(e -> {
+            fernseherView.showUpdateDialog();
+        });
+
+        btnDeleteFernseher.addActionListener(e -> {
+            fernseherView.deleteFernseherUI();
+        });
+
+
+        refreshFernseherList();
         setVisible(true);
     }
 
-    public void Navigation() {
-        navPanel.add(lblFernseher);
-        navPanel.add(btnAddFernseher);
-        navPanel.add(btnUpdateFernseher);
-        navPanel.add(btnDeleteFernseher);
-        navPanel.add(lblKunden);
-        navPanel.add(btnAddKunden);
-        navPanel.add(btnDeleteKunden);
-        navPanel.add(btnUpdateKunden);
 
-        navPanel.setPreferredSize(new Dimension(200, 0));
+    // Fernseher Methoden
+
+    public void refreshFernseherList() {
+        fernseherListModel.clear();
+        for (Fernseher f : fernseherController.getAllFernseher()) {
+            fernseherListModel.addElement(f.getMarke() + " - " + f.getModell());
+        }
     }
 
-    public void MidPanel() {
-        midPanel.setLayout(new BorderLayout());
-        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        refreshList();
-
-        JScrollPane scrollPane = new JScrollPane(list);
-        midPanel.add(scrollPane, BorderLayout.CENTER);
-
-        list.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                DetailList();
-            }
-        });
-    }
-
-    public void DetailPanel() {
-        detailPanel.setLayout(new GridLayout(0,1,5,5));
-        detailPanel.add(lblMarke);
-        detailPanel.add(lblModell);
-        detailPanel.add(lblPreis);
-        detailPanel.add(lblBildschirmdiagonale);
-        detailPanel.add(lblDisplaytechnologie);
-        detailPanel.add(lblBildschirmaufloesung);
-        detailPanel.add(lblBildwiederholfrequenz);
-        detailPanel.add(lblGewicht);
-        detailPanel.add(lblReleasedatum);
-        detailPanel.add(lblPixelaufloesung);
-        detailPanel.add(lblNennleistung);
-        detailPanel.setPreferredSize(new Dimension(300, 0));
-    }
-
-    public void DetailList() {
-        int index = list.getSelectedIndex();
-        if (index >= 0 && index < controller.getAllFernseher().size()) {
-            Fernseher f = controller.getAllFernseher().get(index);
-
+    public void updateFernseherDetails() {
+        int index = fernseherList.getSelectedIndex();
+        if (index >= 0 && index < fernseherController.getAllFernseher().size()) {
+            Fernseher f = fernseherController.getAllFernseher().get(index);
             lblMarke.setText("Marke: " + f.getMarke());
             lblModell.setText("Modell: " + f.getModell());
             lblPreis.setText("Preis: " + f.getPreis() + " CHF");
@@ -131,31 +200,4 @@ public class MainView extends JFrame {
         }
     }
 
-    public void ClearDetailList() {
-        lblMarke.setText("Marke: ");
-        lblModell.setText("Modell: ");
-        lblPreis.setText("Preis: ");
-        lblBildschirmdiagonale.setText("Bildschirmdiagonale: ");
-        lblDisplaytechnologie.setText("Displaytechnologie: ");
-        lblBildschirmaufloesung.setText("Bildschirmauflösung: ");
-        lblBildwiederholfrequenz.setText("Bildwiederholfrequenz: ");
-        lblGewicht.setText("Gewicht: ");
-        lblReleasedatum.setText("Releasedatum: ");
-        lblPixelaufloesung.setText("Pixelauflösung: ");
-        lblNennleistung.setText("Nennleistung: ");
-    }
-
-    public void ButtonActions() {
-        btnAddFernseher.addActionListener(e -> fernseherView.showAddDialog());
-        btnDeleteFernseher.addActionListener(e -> fernseherView.deleteFernseherUI());
-        btnUpdateFernseher.addActionListener(e -> fernseherView.showUpdateDialog());
-    }
-
-    // Refresht die Liste und zeigt dann zum Beispiel gelöschte Items in der Datenbank nicht mehr an.
-    public void refreshList() {
-        listModel.clear();
-        for (Fernseher f : controller.getAllFernseher()) {
-            listModel.addElement(f.getMarke() + " - " + f.getModell());
-        }
-    }
 }
