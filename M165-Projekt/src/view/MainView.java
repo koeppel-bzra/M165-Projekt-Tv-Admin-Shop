@@ -2,10 +2,9 @@ package view;
 
 import controller.FernseherController;
 import controller.KundenController;
-import controller.ProdukteController;
+import controller.BestellungenController;
 import model.Fernseher;
 import model.Kunde;
-import model.Produkt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,9 +14,10 @@ public class MainView extends JFrame {
     // Controller
     FernseherController fernseherController = new FernseherController();
     KundenController kundenController = new KundenController();
-    ProdukteController produkteController = new ProdukteController();
+    BestellungenController bestellungenController = new BestellungenController();
 
     FernseherView fernseherView = new FernseherView(this, fernseherController);
+    KundenView kundenView = new KundenView(this, kundenController);
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -66,15 +66,15 @@ public class MainView extends JFrame {
     JLabel lblUsername = new JLabel("Benutzername: ");
 
 
-    // Produkte Elemente
-    JPanel produktePanel = new JPanel(new BorderLayout());
-    JPanel produkteNavPanel = new JPanel(new GridLayout(0,1,5,5));
-    DefaultListModel<String> produkteListModel = new DefaultListModel<>();
-    JList<String> produkteList = new JList<>(produkteListModel);
+    // Bestellungen Elemente
+    JPanel bestellungenPanel = new JPanel(new BorderLayout());
+    JPanel bestellungenNavPanel = new JPanel(new GridLayout(0,1,5,5));
+    DefaultListModel<String> bestellungenListModel = new DefaultListModel<>();
+    JList<String> bestellungenList = new JList<>(bestellungenListModel);
 
-    JButton btnAddProdukte = new JButton("Hinzufügen");
-    JButton btnUpdateProdukte = new JButton("Aktualisieren");
-    JButton btnDeleteProdukte = new JButton("Löschen");
+    JButton btnAddBestellungen = new JButton("Hinzufügen");
+    JButton btnUpdateBestellungen = new JButton("Aktualisieren");
+    JButton btnDeleteBestellungen = new JButton("Löschen");
 
     public MainView() {
         setSize(1000, 600);
@@ -109,7 +109,15 @@ public class MainView extends JFrame {
 
         // Listener für Liste
         fernseherList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) updateFernseherDetails();
+            if (!e.getValueIsAdjusting()) {
+                updateFernseherDetails();
+            }
+        });
+
+        kundenList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                updateKundenDetails();
+            }
         });
 
 
@@ -136,21 +144,21 @@ public class MainView extends JFrame {
         kundenPanel.add(kundenDetailPanel, BorderLayout.EAST);
 
 
-        // Produkte Aufbau
-        produkteNavPanel.add(btnAddProdukte);
-        produkteNavPanel.add(btnUpdateProdukte);
-        produkteNavPanel.add(btnDeleteProdukte);
-        produkteNavPanel.setPreferredSize(new Dimension(200, 0));
+        // Bestellungen Aufbau
+        bestellungenNavPanel.add(btnAddBestellungen);
+        bestellungenNavPanel.add(btnUpdateBestellungen);
+        bestellungenNavPanel.add(btnDeleteBestellungen);
+        bestellungenNavPanel.setPreferredSize(new Dimension(200, 0));
 
-        JScrollPane produkteScroll = new JScrollPane(produkteList);
-        produktePanel.add(produkteNavPanel, BorderLayout.WEST);
-        produktePanel.add(produkteScroll, BorderLayout.CENTER);
+        JScrollPane bestellungenScroll = new JScrollPane(bestellungenList);
+        bestellungenPanel.add(bestellungenNavPanel, BorderLayout.WEST);
+        bestellungenPanel.add(bestellungenScroll, BorderLayout.CENTER);
 
 
         // Tabs hinzufügen
         tabbedPane.addTab("Fernseher", fernseherPanel);
         tabbedPane.addTab("Kunden", kundenPanel);
-        tabbedPane.addTab("Produkte", produktePanel);
+        tabbedPane.addTab("Bestellungen", bestellungenPanel);
         add(tabbedPane);
 
 
@@ -167,8 +175,22 @@ public class MainView extends JFrame {
             fernseherView.deleteFernseherUI();
         });
 
+        // ActionListener für Kunden
+        btnAddKunden.addActionListener(e -> {
+            kundenView.showAddDialog();
+        });
+
+        btnDeleteKunden.addActionListener(e -> {
+            kundenView.deleteKundeUI();
+        });
+
+        btnUpdateKunden.addActionListener(e -> {
+            kundenView.showUpdateDialog();
+        });
+
 
         refreshFernseherList();
+        refreshKundenList();
         setVisible(true);
     }
 
@@ -199,5 +221,44 @@ public class MainView extends JFrame {
             lblNennleistung.setText("Nennleistung: " + f.getNennleistung());
         }
     }
+
+
+    // Kunden Methoden
+
+    public void refreshKundenList() {
+        kundenListModel.clear();
+        for (Kunde k : kundenController.getAllKunden()) {
+            kundenListModel.addElement(k.getAnrede() + " - " + k.getNachname() + " - " + k.getVorname());
+        }
+    }
+
+    public void updateKundenDetails() {
+        int index = kundenList.getSelectedIndex();
+
+        if (index == -1) {
+            lblAnrede.setText("Anrede: ");
+            lblNachname.setText("Nachname: ");
+            lblVorname.setText("Vorname: ");
+            lblTelefonPrivat.setText("Telefon Privat: ");
+            lblTelefonMobile.setText("Telefon Mobile: ");
+            lblEmail.setText("Email: ");
+            lblGeburtsdatum.setText("Geburtsdatum: ");
+            lblUsername.setText("Benutzername: ");
+            return;
+        }
+
+        if (index >= 0 && index < kundenController.getAllKunden().size()) {
+            Kunde k = kundenController.getAllKunden().get(index);
+            lblAnrede.setText("Anrede: " + k.getAnrede());
+            lblNachname.setText("Nachname: " + k.getNachname());
+            lblVorname.setText("Vorname: " + k.getVorname());
+            lblTelefonPrivat.setText("Telefon Privat: " + k.getTelefonPrivat());
+            lblTelefonMobile.setText("Telefon Mobile: " + k.getTelefonMobile());
+            lblEmail.setText("Email: " + k.getEmail());
+            lblGeburtsdatum.setText("Geburtsdatum: " + k.getGeburtsdatum());
+            lblUsername.setText("Benutzername: " + k.getUsername());
+        }
+    }
+
 
 }
