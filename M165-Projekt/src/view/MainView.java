@@ -10,6 +10,7 @@ import model.Kunde;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class MainView extends JFrame {
 
@@ -133,6 +134,12 @@ public class MainView extends JFrame {
             }
         });
 
+        bestellungenList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                updateBestellungenDetails();
+            }
+        });
+
 
         // Kunden Aufbau
         kundenNavPanel.add(btnAddKunden);
@@ -219,6 +226,14 @@ public class MainView extends JFrame {
             bestellungView.showAddDialog();
         });
 
+        btnUpdateBestellungen.addActionListener(e -> {
+            bestellungView.showUpdateDialog();
+        });
+
+        btnDeleteBestellungen.addActionListener(e -> {
+            bestellungView.deleteBestellung();
+        });
+
 
         refreshFernseherList();
         refreshKundenList();
@@ -300,16 +315,39 @@ public class MainView extends JFrame {
     public void refreshBestellungenList() {
         bestellungenListModel.clear();
 
-        double einzelpreis = 0;
+        Fernseher fernseher = new Fernseher();
 
         for (Bestellung bestellung : bestellungenController.getAllBestellungen()) {
-
-            for (Bestellposition pos : bestellung.getBestellpositionen()) {
-               einzelpreis = pos.getEinzelpreis();
-            }
-
-            bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde() + " - " + einzelpreis);
+            bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde());
         }
+    }
+
+
+    public void updateBestellungenDetails() {
+        int index = bestellungenList.getSelectedIndex();
+
+        if (index == -1) {
+            lblBestellnummer.setText("Bestellnummer: ");
+            lblBestelldatum.setText("Bestelldatum: ");
+            lblKunde.setText("Kunde: ");
+            lblFernseher.setText("Fernseher: ");
+            lblMenge.setText("Menge: ");
+            return;
+        }
+
+        Bestellung bestellung = bestellungenController.getAllBestellungen().get(index);
+        List<Bestellposition> bestellpositionen = bestellung.getBestellpositionen();
+
+        lblBestellnummer.setText("Bestellnummer: " + bestellung.getBestellnummer());
+        lblBestelldatum.setText("Bestelldatum: " + bestellung.getBestellDatum());
+        lblKunde.setText("Kunde: " + bestellung.getKunde());
+
+        for (Bestellposition pos : bestellpositionen) {
+            lblFernseher.setText("Fernseher: " + pos.getFernseher());
+            lblEinzelpreis.setText("Einzelpreis: " + pos.getEinzelpreis());
+            lblMenge.setText("Menge: " + pos.getStueckzahl());
+        }
+
     }
 
 

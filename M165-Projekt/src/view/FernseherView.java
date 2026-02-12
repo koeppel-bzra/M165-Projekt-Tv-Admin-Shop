@@ -100,6 +100,7 @@ public class FernseherView extends JFrame {
         }
     }
 
+
     // Dialog für das Updaten
     public void showUpdateDialog() {
         String selectedString = view.fernseherList.getSelectedValue();
@@ -155,6 +156,7 @@ public class FernseherView extends JFrame {
             JOptionPane.showMessageDialog(dialog, "Ungültige Eingabe");
         }
     }
+
 
     // Löschen
     public void deleteFernseherUI() {

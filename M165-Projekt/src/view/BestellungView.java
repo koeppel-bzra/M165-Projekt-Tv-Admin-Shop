@@ -11,6 +11,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -47,34 +48,34 @@ public class BestellungView {
     private JButton btnAction = new JButton("Hinzufügen");
     private JDialog dialog = new JDialog();
 
+    public BestellungView(MainView view, BestellungenController bestellungenController, FernseherController fernseherController, KundenController kundenController) {
+        this.view = view;
+        this.bestellungenController = bestellungenController;
+        this.kundenController = kundenController;
+        this.fernseherController = fernseherController;
+
+        dateModel.setSelected(true);
+        Properties p = new Properties();
+        p.put("text.today", "Heute");
+        p.put("text.month", "Monat");
+        p.put("text.year", "Jahr");
+        JDatePanelImpl datePanel = new JDatePanelImpl(dateModel, p);
+        datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
+    }
 
 
+    // Bestellungen adden
     public void showAddDialog() {
-        dialog.getContentPane().removeAll();
-        dialog.setSize(400, 250);
-        dialog.setLocationRelativeTo(view);
-        dialog.setLayout(new GridLayout(0, 2, 5, 5));
+        btnAction.setText("Hinzufügen");
 
-        dialog.add(lblBestellNummer);
-        dialog.add(txtBestellNummer);
-        dialog.add(lblBestellDatum);
-        dialog.add(datePicker);
-        dialog.add(lblKunde);
-        dialog.add(cmbKunde);
-        dialog.add(lblFernseher);
-        dialog.add(cmbFernseher);
-        dialog.add(lblMenge);
-        dialog.add(spnMenge);
-        dialog.add(lblWhiteSpace);
-        dialog.add(btnAction);
+        for (ActionListener al : btnAction.getActionListeners()) {
+            btnAction.removeActionListener(al);
+        }
 
-        initCombobox();
+        btnAction.addActionListener(e -> addBestellung());
 
-        dialog.setVisible(true);
-
-        btnAction.addActionListener(e -> {
-            addBestellung();
-        });
+        clearFields();
+        setupDialog();
     }
 
     public void addBestellung() {
@@ -100,9 +101,105 @@ public class BestellungView {
         );
 
         bestellungenController.addBestellung(bestellung);
+        dialog.dispose();
         view.refreshBestellungenList();
+    }
+
+
+    // Bestellungen updaten
+    public void showUpdateDialog() {
+        String selectedString = view.bestellungenList.getSelectedValue();
+        if (selectedString == null) {
+            JOptionPane.showMessageDialog(view, "Keine Bestellunge ausgewählt");
+            return;
+        }
+
+            Bestellung bToUpdate = bestellungenController.getAllBestellungen().stream()
+                    .filter(b -> (b.getBestellnummer() + " - " + b.getKunde())
+                            .equals(selectedString)).findFirst().orElse(null);
+
+
+        if (bToUpdate == null) {
+            JOptionPane.showMessageDialog(view, "Bestellung nicht gefunden");
+            return;
+        }
+
+        fillFields(bToUpdate);
+
+        btnAction.setText("Aktualisieren");
+
+        for (ActionListener al : btnAction.getActionListeners()) {
+            btnAction.removeActionListener(al);
+        }
+
+        btnAction.addActionListener(e -> {
+            updateBestellung(bToUpdate);
+        });
+
+        setupDialog();
+    }
+
+    public void updateBestellung(Bestellung bestellung) {
+        bestellung.setBestellnummer(txtBestellNummer.getText());
+        bestellung.setBestellDatum(
+                LocalDate.ofInstant(
+                        ((Date) datePicker.getModel().getValue()).toInstant(),
+                        ZoneId.systemDefault()
+                )
+        );
+        List<Bestellposition> bestellpositionen = bestellung.getBestellpositionen();
+        initCombobox();
+
+        for (Bestellposition pos : bestellpositionen) {
+            pos.setStueckzahl((Integer) spnMenge.getValue());
+        }
+
+        bestellungenController.updateBestellung(bestellung);
+        view.refreshBestellungenList();
+
         dialog.dispose();
     }
+
+
+    // Bestellungen löschen
+    public void deleteBestellung() {
+        String selectedString = view.bestellungenList.getSelectedValue();
+
+        if (selectedString == null) {
+            JOptionPane.showMessageDialog(view, "Keine Bestellung ausgewählt");
+            return;
+        }
+
+        Bestellung selected = new Bestellung();
+        for (Bestellung b : bestellungenController.getAllBestellungen()) {
+            if ((b.getBestellnummer() + " - " + b.getKunde()).equals(selectedString)) {
+                selected = b;
+                break;
+            }
+        }
+
+        if (selected != null) {
+
+            int result= JOptionPane.showConfirmDialog(
+                    view,
+                    "Möchtest du diese Bestellung wirklich löschen?",
+                    "Löschen bestätigen",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (result == JOptionPane.YES_OPTION) {
+                bestellungenController.deleteBestellung(selected);
+                view.refreshBestellungenList();
+                view.updateBestellungenDetails();
+            }
+
+            else if (result == JOptionPane.NO_OPTION) {
+                return;
+            }
+        }
+    }
+
+
 
     public void initCombobox() {
         cmbFernseher.removeAllItems();
@@ -118,23 +215,57 @@ public class BestellungView {
 
 
 
-    public BestellungView(MainView view, BestellungenController bestellungenController, FernseherController fernseherController, KundenController kundenController) {
-        this.view = view;
-        this.bestellungenController = bestellungenController;
-        this.kundenController = kundenController;
-        this.fernseherController = fernseherController;
 
 
-        dateModel.setSelected(true);
+    private void fillFields(Bestellung b) {
 
-        Properties p = new Properties();
-        p.put("text.today", "Heute");
-        p.put("text.month", "Monat");
-        p.put("text.year", "Jahr");
+        List<Bestellposition> bestellpositionen = b.getBestellpositionen();
 
-        JDatePanelImpl datePanel = new JDatePanelImpl(dateModel, p);
-        datePicker = new JDatePickerImpl(datePanel, new DateComponentFormatter());
+        txtBestellNummer.setText(b.getBestellnummer());
+        dateModel.setValue(
+                Date.from(
+                        b.getBestellDatum()
+                                .atStartOfDay(ZoneId.systemDefault())
+                                .toInstant()
+                )
+        );
+        initCombobox();
+
+        for (Bestellposition bestellposition : bestellpositionen) {
+            spnMenge.setValue(bestellposition.getStueckzahl());
+        }
     }
+
+    private void setupDialog() {
+        dialog.getContentPane().removeAll();
+        dialog.setSize(400, 250);
+        dialog.setLocationRelativeTo(view);
+        dialog.setLayout(new GridLayout(0, 2, 5, 5));
+
+        dialog.add(lblBestellNummer);
+        dialog.add(txtBestellNummer);
+        dialog.add(lblBestellDatum);
+        dialog.add(datePicker);
+        dialog.add(lblKunde);
+        dialog.add(cmbKunde);
+        dialog.add(lblFernseher);
+        dialog.add(cmbFernseher);
+        dialog.add(lblMenge);
+        dialog.add(spnMenge);
+        dialog.add(lblWhiteSpace);
+        dialog.add(btnAction);
+
+        initCombobox();
+
+        dialog.setVisible(true);
+    }
+
+    private void clearFields() {
+        txtBestellNummer.setText("");
+        spnMenge.setValue(1);
+        dateModel.setValue(new Date());
+    }
+
 
 
 }
