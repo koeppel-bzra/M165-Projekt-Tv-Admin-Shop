@@ -49,6 +49,11 @@ public class Kunde {
 
     }
 
+    @Override
+    public String toString() {
+        return nachname + " " + vorname;
+    }
+
     public ObjectId getKundeId() {
         return kundeId;
     }

@@ -50,7 +50,7 @@ public class KundenView {
     private JTextField txtUsername = new JTextField();
 
     private JLabel lblPassword = new JLabel("Passwort");
-    private JTextField txtPassword = new JTextField();
+    private JPasswordField txtPassword = new JPasswordField();
 
     private JLabel lblWhiteSpace = new JLabel();
     private JButton btnAction = new JButton("Hinzufügen");
@@ -199,7 +199,6 @@ public class KundenView {
 
     private void setupDialog() {
 
-        dialog.getContentPane().removeAll();
         dialog.setSize(400, 400);
         dialog.setLocationRelativeTo(view);
         dialog.setLayout(new GridLayout(0, 2, 5, 5));

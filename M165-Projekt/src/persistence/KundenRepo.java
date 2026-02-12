@@ -8,6 +8,7 @@ import model.Kunde;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,5 +46,9 @@ public class KundenRepo {
         List<Kunde> result = new ArrayList<>();
         collection.find().into(result);
         return result;
+    }
+
+    public Kunde getKundeById(ObjectId id) {
+        return collection.find(eq("_id", id)).first();
     }
 }

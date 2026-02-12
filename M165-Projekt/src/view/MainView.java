@@ -3,6 +3,8 @@ package view;
 import controller.FernseherController;
 import controller.KundenController;
 import controller.BestellungenController;
+import model.Bestellposition;
+import model.Bestellung;
 import model.Fernseher;
 import model.Kunde;
 
@@ -18,6 +20,7 @@ public class MainView extends JFrame {
 
     FernseherView fernseherView = new FernseherView(this, fernseherController);
     KundenView kundenView = new KundenView(this, kundenController);
+    BestellungView bestellungView = new BestellungView(this, bestellungenController, fernseherController, kundenController);
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
@@ -67,15 +70,24 @@ public class MainView extends JFrame {
     JLabel lblPassword = new JLabel("Passwort: ");
 
 
+
     // Bestellungen Elemente
     JPanel bestellungenPanel = new JPanel(new BorderLayout());
     JPanel bestellungenNavPanel = new JPanel(new GridLayout(0,1,5,5));
+    JPanel bestellungenDetailPanel = new JPanel(new GridLayout(0, 1, 5 ,5));
     DefaultListModel<String> bestellungenListModel = new DefaultListModel<>();
     JList<String> bestellungenList = new JList<>(bestellungenListModel);
 
     JButton btnAddBestellungen = new JButton("Hinzufügen");
     JButton btnUpdateBestellungen = new JButton("Aktualisieren");
     JButton btnDeleteBestellungen = new JButton("Löschen");
+
+    JLabel lblBestellnummer = new JLabel("Bestellnummer: ");
+    JLabel lblBestelldatum = new JLabel("Bestelldatum: ");
+    JLabel lblKunde = new JLabel("Kunde: ");
+    JLabel lblFernseher = new JLabel("Fernseher: ");
+    JLabel lblEinzelpreis = new JLabel("Einzelpreis: ");
+    JLabel lblMenge = new JLabel("Menge: ");
 
     public MainView() {
         setSize(1000, 600);
@@ -156,6 +168,16 @@ public class MainView extends JFrame {
         bestellungenPanel.add(bestellungenNavPanel, BorderLayout.WEST);
         bestellungenPanel.add(bestellungenScroll, BorderLayout.CENTER);
 
+        bestellungenDetailPanel.add(lblBestellnummer);
+        bestellungenDetailPanel.add(lblBestelldatum);
+        bestellungenDetailPanel.add(lblKunde);
+        bestellungenDetailPanel.add(lblFernseher);
+        bestellungenDetailPanel.add(lblEinzelpreis);
+        bestellungenDetailPanel.add(lblMenge);
+        bestellungenDetailPanel.setPreferredSize(new Dimension(300, 0));
+
+        bestellungenPanel.add(bestellungenDetailPanel, BorderLayout.EAST);
+
 
         // Tabs hinzufügen
         tabbedPane.addTab("Fernseher", fernseherPanel);
@@ -177,6 +199,7 @@ public class MainView extends JFrame {
             fernseherView.deleteFernseherUI();
         });
 
+
         // ActionListener für Kunden
         btnAddKunden.addActionListener(e -> {
             kundenView.showAddDialog();
@@ -191,8 +214,15 @@ public class MainView extends JFrame {
         });
 
 
+        // ActionLIstener für Bestellungen
+        btnAddBestellungen.addActionListener(e -> {
+            bestellungView.showAddDialog();
+        });
+
+
         refreshFernseherList();
         refreshKundenList();
+        refreshBestellungenList();
         setVisible(true);
     }
 
@@ -261,6 +291,24 @@ public class MainView extends JFrame {
             lblGeburtsdatum.setText("Geburtsdatum: " + k.getGeburtsdatum());
             lblUsername.setText("Benutzername: " + k.getUsername());
             lblPassword.setText("Passwort: " + kundenView.hashPassword(k.getPassword()));
+        }
+    }
+
+
+    // Bestellungen Methoden
+
+    public void refreshBestellungenList() {
+        bestellungenListModel.clear();
+
+        double einzelpreis = 0;
+
+        for (Bestellung bestellung : bestellungenController.getAllBestellungen()) {
+
+            for (Bestellposition pos : bestellung.getBestellpositionen()) {
+               einzelpreis = pos.getEinzelpreis();
+            }
+
+            bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde() + " - " + einzelpreis);
         }
     }
 

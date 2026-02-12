@@ -4,22 +4,22 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 import com.mongodb.client.MongoDatabase;
+import model.Bestellposition;
+import model.Bestellung;
 import model.Fernseher;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-public class FernseherRepo {
+public class BestellungRepo {
 
     // Umsetzung mit Pojo
     CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
@@ -27,31 +27,27 @@ public class FernseherRepo {
 
     MongoClient mongoClient = new MongoClient("localhost", 27017);
     MongoDatabase database = mongoClient.getDatabase("tvshop").withCodecRegistry(pojoCodecRegistry);
-    MongoCollection<Fernseher> collection = database.getCollection("fernseher", Fernseher.class);
+    MongoCollection<Bestellung> collection = database.getCollection("bestellungen", Bestellung.class);
 
-    public void addFernseher(Fernseher f) {
-        collection.insertOne(f);
+    public void addBestellung(Bestellung b) {
+        collection.insertOne(b);
     }
 
-    public void updateFernseher(Fernseher f) {
-        if (f.getFernseherId() != null) {
+    public void updateBestellung(Bestellung b) {
+        if (b.getBestellungId() != null) {
             collection.replaceOne(
-                    eq("_id", f.getFernseherId()), f
+                    eq("_id", b.getBestellungId()), b
             );
         }
     }
 
-    public void deleteFernseher(Fernseher f) {
-        collection.deleteOne(eq("_id", f.getFernseherId()));
+    public void deleteBestellung(Bestellung b) {
+        collection.deleteOne(eq("_id", b.getBestellungId()));
     }
 
-    public List<Fernseher> getAll() {
-        List<Fernseher> result = new ArrayList<>();
+    public List<Bestellung> getAll() {
+        List<Bestellung> result = new ArrayList<>();
         collection.find().into(result);
         return result;
-    }
-
-    public Fernseher getFernseherById(ObjectId id) {
-        return collection.find(eq("_id", id)).first();
     }
 }

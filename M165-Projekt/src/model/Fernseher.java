@@ -25,9 +25,7 @@ public class Fernseher {
 
     @Override
     public String toString() {
-        return "ID: " + fernseherId + "\n" +
-                "Marke: " + marke + "\n" +
-                "Modell: " + modell + "\n";
+        return marke + " " + modell;
     }
 
     public Fernseher() {
