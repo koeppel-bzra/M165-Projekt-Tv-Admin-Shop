@@ -74,7 +74,7 @@ public class FernseherView extends JFrame {
     }
 
 
-    // Dialog für das Adden
+    // Dialog für das Adden 
     public void showAddDialog() {
         clearFields();
         btnAction.setText("Hinzufügen");
@@ -195,6 +195,9 @@ public class FernseherView extends JFrame {
             }
         }
     }
+
+
+
 
     // Generalisierte Methode für Adden und Updaten
     private void setupDialog() {

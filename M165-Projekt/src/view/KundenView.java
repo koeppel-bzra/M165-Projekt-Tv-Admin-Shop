@@ -73,6 +73,8 @@ public class KundenView {
     }
 
 
+    // Kunden hinzufügen
+
     public void showAddDialog() {
         clearFields();
         btnAction.setText("Hinzufügen");
@@ -97,6 +99,8 @@ public class KundenView {
         }
     }
 
+
+    // Kunden aktualisieren
 
     public void showUpdateDialog() {
         String selectedString = view.kundenList.getSelectedValue();
@@ -130,7 +134,6 @@ public class KundenView {
         setupDialog();
     }
 
-
     private void updateKundeUI(Kunde k) {
         try {
             k.setAnrede(txtAnrede.getText());
@@ -151,6 +154,7 @@ public class KundenView {
             controller.updateKunde(k);
 
             view.refreshKundenList();
+            view.refreshBestellungenList();
             view.updateKundenDetails();
 
             dialog.dispose();
@@ -161,6 +165,7 @@ public class KundenView {
     }
 
 
+    // Kunden löschen
 
     public void deleteKundeUI() {
         String selectedString = view.kundenList.getSelectedValue();
@@ -197,6 +202,8 @@ public class KundenView {
     }
 
 
+
+
     private void setupDialog() {
 
         dialog.setSize(400, 400);
@@ -226,7 +233,6 @@ public class KundenView {
 
         dialog.setVisible(true);
     }
-
 
     private void clearFields() {
         txtAnrede.setText("");
@@ -278,6 +284,7 @@ public class KundenView {
 
 
 
+    // Passwort Hash Methoden
 
     public String hashPassword(String password) {
         try {

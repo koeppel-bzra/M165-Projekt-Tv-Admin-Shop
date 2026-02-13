@@ -1,12 +1,14 @@
 package controller;
 
 import model.Kunde;
+import persistence.BestellungRepo;
 import persistence.KundenRepo;
 
 import java.util.List;
 
 public class KundenController {
     KundenRepo kundenRepo = new KundenRepo();
+    BestellungRepo bestellungRepo = new BestellungRepo();
 
     public void addKunde(Kunde kunde) {
         kundenRepo.addKunde(kunde);
@@ -20,6 +22,7 @@ public class KundenController {
 
     public void updateKunde(Kunde kunde) {
         kundenRepo.updateKunde(kunde);
+
         System.out.println("Kunden erfolgreich aktualisiert");
     }
 

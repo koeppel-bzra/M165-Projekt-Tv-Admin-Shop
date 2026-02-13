@@ -315,13 +315,10 @@ public class MainView extends JFrame {
     public void refreshBestellungenList() {
         bestellungenListModel.clear();
 
-        Fernseher fernseher = new Fernseher();
-
         for (Bestellung bestellung : bestellungenController.getAllBestellungen()) {
             bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde());
         }
     }
-
 
     public void updateBestellungenDetails() {
         int index = bestellungenList.getSelectedIndex();

@@ -28,6 +28,20 @@ public class Fernseher {
         return marke + " " + modell;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Fernseher)) return false;
+        Fernseher f = (Fernseher) o;
+        return fernseherId.equals(f.fernseherId);
+    }
+
+    @Override
+    public int hashCode() {
+        return fernseherId.hashCode();
+    }
+
+
     public Fernseher() {
 
     }

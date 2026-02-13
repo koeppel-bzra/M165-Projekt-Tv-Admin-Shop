@@ -75,6 +75,7 @@ public class BestellungView {
         btnAction.addActionListener(e -> addBestellung());
 
         clearFields();
+        initCombobox();
         setupDialog();
     }
 
@@ -124,7 +125,9 @@ public class BestellungView {
             return;
         }
 
+        initCombobox();
         fillFields(bToUpdate);
+        setupDialog();
 
         btnAction.setText("Aktualisieren");
 
@@ -136,7 +139,7 @@ public class BestellungView {
             updateBestellung(bToUpdate);
         });
 
-        setupDialog();
+
     }
 
     public void updateBestellung(Bestellung bestellung) {
@@ -148,10 +151,11 @@ public class BestellungView {
                 )
         );
         List<Bestellposition> bestellpositionen = bestellung.getBestellpositionen();
-        initCombobox();
+        bestellung.setKunde((Kunde) cmbKunde.getSelectedItem());
 
         for (Bestellposition pos : bestellpositionen) {
             pos.setStueckzahl((Integer) spnMenge.getValue());
+            pos.setFernseher((Fernseher) cmbFernseher.getSelectedItem());
         }
 
         bestellungenController.updateBestellung(bestellung);
@@ -201,6 +205,7 @@ public class BestellungView {
 
 
 
+
     public void initCombobox() {
         cmbFernseher.removeAllItems();
         for (Fernseher f : fernseherController.getAllFernseher()) {
@@ -212,10 +217,6 @@ public class BestellungView {
             cmbKunde.addItem(k);
         }
     }
-
-
-
-
 
     private void fillFields(Bestellung b) {
 
@@ -229,11 +230,12 @@ public class BestellungView {
                                 .toInstant()
                 )
         );
-        initCombobox();
+        cmbKunde.setSelectedItem(b.getKunde());
 
-        for (Bestellposition bestellposition : bestellpositionen) {
-            spnMenge.setValue(bestellposition.getStueckzahl());
-        }
+        Bestellposition pos = bestellpositionen.get(0);
+        spnMenge.setValue(pos.getStueckzahl());
+        cmbFernseher.setSelectedItem(pos.getFernseher());
+
     }
 
     private void setupDialog() {
@@ -254,8 +256,6 @@ public class BestellungView {
         dialog.add(spnMenge);
         dialog.add(lblWhiteSpace);
         dialog.add(btnAction);
-
-        initCombobox();
 
         dialog.setVisible(true);
     }

@@ -50,8 +50,22 @@ public class Kunde {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Kunde)) return false;
+        Kunde k = (Kunde) o;
+        return kundeId.equals(k.kundeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return kundeId.hashCode();
+    }
+
+
+    @Override
     public String toString() {
-        return nachname + " " + vorname;
+        return anrede + " " + nachname + " " + vorname;
     }
 
     public ObjectId getKundeId() {
