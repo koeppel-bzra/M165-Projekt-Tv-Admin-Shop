@@ -13,6 +13,9 @@ public class Kunde {
     private String anrede;
     private String nachname;
     private String vorname;
+
+    private Adresse adresse;
+
     private String telefonPrivat;
     private String telefonMobile;
     private String email;
@@ -20,24 +23,26 @@ public class Kunde {
     private String username;
     private String password;
 
-    public Kunde(String anrede, String nachname, String vorname, String telefonPrivat, String telefonMobile, String email, LocalDate geburtsdatum, String username, String password) {
-        this.anrede = anrede;
+    public Kunde(ObjectId kundeId, String nachname, String anrede, String vorname, Adresse adresse, String telefonPrivat, String email, String telefonMobile, LocalDate geburtsdatum, String username, String password) {
+        this.kundeId = kundeId;
         this.nachname = nachname;
+        this.anrede = anrede;
         this.vorname = vorname;
+        this.adresse = adresse;
         this.telefonPrivat = telefonPrivat;
-        this.telefonMobile = telefonMobile;
         this.email = email;
+        this.telefonMobile = telefonMobile;
         this.geburtsdatum = geburtsdatum;
         this.username = username;
         this.password = password;
     }
 
-    public Kunde(ObjectId kundeId, String anrede, String nachname, String vorname, String telefonPrivat, String telefonMobile, String email, LocalDate geburtsdatum, String username, String password) {
-        this.kundeId = kundeId;
+    public Kunde(String anrede, String nachname, String vorname, String telefonPrivat, Adresse adresse, String telefonMobile, String email, LocalDate geburtsdatum, String username, String password) {
         this.anrede = anrede;
         this.nachname = nachname;
         this.vorname = vorname;
         this.telefonPrivat = telefonPrivat;
+        this.adresse = adresse;
         this.telefonMobile = telefonMobile;
         this.email = email;
         this.geburtsdatum = geburtsdatum;
@@ -98,6 +103,14 @@ public class Kunde {
 
     public void setVorname(String vorname) {
         this.vorname = vorname;
+    }
+
+    public Adresse getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(Adresse adresse) {
+        this.adresse = adresse;
     }
 
     public String getTelefonPrivat() {

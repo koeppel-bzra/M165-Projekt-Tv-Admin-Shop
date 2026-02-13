@@ -116,7 +116,7 @@ public class BestellungView {
         }
 
             Bestellung bToUpdate = bestellungenController.getAllBestellungen().stream()
-                    .filter(b -> (b.getBestellnummer() + " - " + b.getKunde())
+                    .filter(b -> (b.getBestellnummer() + " - " + b.getKunde().getNachname() + " " + b.getKunde().getVorname())
                             .equals(selectedString)).findFirst().orElse(null);
 
 

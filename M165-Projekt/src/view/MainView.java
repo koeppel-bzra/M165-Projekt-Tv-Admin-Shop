@@ -63,6 +63,9 @@ public class MainView extends JFrame {
     JLabel lblAnrede = new JLabel("Anrede: ");
     JLabel lblNachname = new JLabel("Nachname: ");
     JLabel lblVorname = new JLabel("Vorname: ");
+    JLabel lblStrasse = new JLabel("Strasse: ");
+    JLabel lblPLZ = new JLabel("PLZ: ");
+    JLabel lblOrt = new JLabel("Ort: ");
     JLabel lblTelefonPrivat = new JLabel("Telefon Privat: ");
     JLabel lblTelefonMobile = new JLabel("Telefon Mobile: ");
     JLabel lblEmail = new JLabel("Email: ");
@@ -89,6 +92,8 @@ public class MainView extends JFrame {
     JLabel lblFernseher = new JLabel("Fernseher: ");
     JLabel lblEinzelpreis = new JLabel("Einzelpreis: ");
     JLabel lblMenge = new JLabel("Menge: ");
+
+
 
     public MainView() {
         setSize(1000, 600);
@@ -154,6 +159,9 @@ public class MainView extends JFrame {
         kundenDetailPanel.add(lblAnrede);
         kundenDetailPanel.add(lblNachname);
         kundenDetailPanel.add(lblVorname);
+        kundenDetailPanel.add(lblStrasse);
+        kundenDetailPanel.add(lblPLZ);
+        kundenDetailPanel.add(lblOrt);
         kundenDetailPanel.add(lblTelefonPrivat);
         kundenDetailPanel.add(lblTelefonMobile);
         kundenDetailPanel.add(lblEmail);
@@ -286,6 +294,9 @@ public class MainView extends JFrame {
             lblAnrede.setText("Anrede: ");
             lblNachname.setText("Nachname: ");
             lblVorname.setText("Vorname: ");
+            lblStrasse.setText("Strasse: ");
+            lblPLZ.setText("PLZ: ");
+            lblOrt.setText("Ort: ");
             lblTelefonPrivat.setText("Telefon Privat: ");
             lblTelefonMobile.setText("Telefon Mobile: ");
             lblEmail.setText("Email: ");
@@ -300,6 +311,9 @@ public class MainView extends JFrame {
             lblAnrede.setText("Anrede: " + k.getAnrede());
             lblNachname.setText("Nachname: " + k.getNachname());
             lblVorname.setText("Vorname: " + k.getVorname());
+            lblStrasse.setText("Strasse: " + k.getAdresse().getStrasse());
+            lblPLZ.setText("PLZ: " + k.getAdresse().getPlz());
+            lblOrt.setText("Ort: " + k.getAdresse().getOrt());
             lblTelefonPrivat.setText("Telefon Privat: " + k.getTelefonPrivat());
             lblTelefonMobile.setText("Telefon Mobile: " + k.getTelefonMobile());
             lblEmail.setText("Email: " + k.getEmail());

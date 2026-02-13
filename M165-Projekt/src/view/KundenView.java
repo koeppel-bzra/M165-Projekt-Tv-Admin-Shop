@@ -1,6 +1,7 @@
 package view;
 
 import controller.KundenController;
+import model.Adresse;
 import model.Kunde;
 import org.jdatepicker.impl.DateComponentFormatter;
 import org.jdatepicker.impl.JDatePanelImpl;
@@ -31,6 +32,15 @@ public class KundenView {
 
     private JLabel lblVorname = new JLabel("Vorname");
     private JTextField txtVorname = new JTextField();
+
+    private JLabel lblStrasse = new JLabel("Strasse");
+    private JTextField txtStrasse = new JTextField();
+
+    private JLabel lblPLZ = new JLabel("PLZ");
+    private JTextField txtPLZ = new JTextField();
+
+    private JLabel lblOrt = new JLabel("Ort");
+    private JTextField txtOrt = new JTextField();
 
     private JLabel lblTelefonPrivate = new JLabel("Telefon Privat");
     private JTextField txtTelefonPrivate = new JTextField();
@@ -206,7 +216,7 @@ public class KundenView {
 
     private void setupDialog() {
 
-        dialog.setSize(400, 400);
+        dialog.setSize(400, 450);
         dialog.setLocationRelativeTo(view);
         dialog.setLayout(new GridLayout(0, 2, 5, 5));
 
@@ -216,6 +226,12 @@ public class KundenView {
         dialog.add(txtNachname);
         dialog.add(lblVorname);
         dialog.add(txtVorname);
+        dialog.add(lblStrasse);
+        dialog.add(txtStrasse);
+        dialog.add(lblPLZ);
+        dialog.add(txtPLZ);
+        dialog.add(lblOrt);
+        dialog.add(txtOrt);
         dialog.add(lblTelefonPrivate);
         dialog.add(txtTelefonPrivate);
         dialog.add(lblTelefonMobile);
@@ -238,6 +254,9 @@ public class KundenView {
         txtAnrede.setText("");
         txtNachname.setText("");
         txtVorname.setText("");
+        txtStrasse.setText("");
+        txtPLZ.setText("");
+        txtOrt.setText("");
         txtTelefonPrivate.setText("");
         txtTelefonMobile.setText("");
         txtEmail.setText("");
@@ -250,6 +269,9 @@ public class KundenView {
         txtAnrede.setText(k.getAnrede());
         txtNachname.setText(k.getNachname());
         txtVorname.setText(k.getVorname());
+        txtStrasse.setText(k.getAdresse().getStrasse());
+        txtPLZ.setText(k.getAdresse().getPlz());
+        txtOrt.setText(k.getAdresse().getOrt());
         txtTelefonPrivate.setText(k.getTelefonPrivat());
         txtTelefonMobile.setText(k.getTelefonMobile());
         txtEmail.setText(k.getEmail());
@@ -266,11 +288,18 @@ public class KundenView {
     }
 
     private Kunde buildKundeFromFields() {
+
+        Adresse adresse = new Adresse();
+        adresse.setStrasse(txtStrasse.getText());
+        adresse.setPlz(txtPLZ.getText());
+        adresse.setOrt(txtOrt.getText());
+
         return new Kunde(
                 txtAnrede.getText(),
                 txtNachname.getText(),
                 txtVorname.getText(),
                 txtTelefonPrivate.getText(),
+                adresse,
                 txtTelefonMobile.getText(),
                 txtEmail.getText(),
                 LocalDate.ofInstant(
