@@ -275,7 +275,7 @@ public class MainView extends JFrame {
     public void refreshKundenList() {
         kundenListModel.clear();
         for (Kunde k : kundenController.getAllKunden()) {
-            kundenListModel.addElement(k.getAnrede() + " - " + k.getNachname() + " - " + k.getVorname());
+            kundenListModel.addElement(k.getNachname() + " " + k.getVorname());
         }
     }
 
@@ -316,7 +316,7 @@ public class MainView extends JFrame {
         bestellungenListModel.clear();
 
         for (Bestellung bestellung : bestellungenController.getAllBestellungen()) {
-            bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde());
+            bestellungenListModel.addElement(bestellung.getBestellnummer() + " - " + bestellung.getKunde().getNachname() + " " + bestellung.getKunde().getVorname());
         }
     }
 

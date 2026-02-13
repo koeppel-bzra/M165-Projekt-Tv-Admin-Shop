@@ -171,12 +171,11 @@ public class BestellungView {
 
         if (selectedString == null) {
             JOptionPane.showMessageDialog(view, "Keine Bestellung ausgewählt");
-            return;
         }
 
         Bestellung selected = new Bestellung();
         for (Bestellung b : bestellungenController.getAllBestellungen()) {
-            if ((b.getBestellnummer() + " - " + b.getKunde()).equals(selectedString)) {
+            if ((b.getBestellnummer() + " - " + b.getKunde().getNachname() + " " + b.getKunde().getVorname()).equals(selectedString)) {
                 selected = b;
                 break;
             }
@@ -184,7 +183,7 @@ public class BestellungView {
 
         if (selected != null) {
 
-            int result= JOptionPane.showConfirmDialog(
+            int result = JOptionPane.showConfirmDialog(
                     view,
                     "Möchtest du diese Bestellung wirklich löschen?",
                     "Löschen bestätigen",
@@ -196,12 +195,9 @@ public class BestellungView {
                 view.refreshBestellungenList();
                 view.updateBestellungenDetails();
             }
-
-            else if (result == JOptionPane.NO_OPTION) {
-                return;
-            }
         }
     }
+
 
 
 

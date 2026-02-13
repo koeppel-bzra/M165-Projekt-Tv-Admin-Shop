@@ -4,6 +4,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 import com.mongodb.client.MongoDatabase;
+import model.Bestellposition;
+import model.Bestellung;
 import model.Fernseher;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecProvider;
@@ -20,6 +22,8 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class FernseherRepo {
+
+    BestellungRepo bestellungRepo = new BestellungRepo();
 
     // Umsetzung mit Pojo
     CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();

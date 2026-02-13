@@ -22,7 +22,6 @@ public class KundenController {
 
     public void updateKunde(Kunde kunde) {
         kundenRepo.updateKunde(kunde);
-
         System.out.println("Kunden erfolgreich aktualisiert");
     }
 

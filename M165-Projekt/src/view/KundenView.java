@@ -112,7 +112,7 @@ public class KundenView {
 
 
         Kunde kundeToUpdate = controller.getAllKunden().stream()
-                .filter(k -> (k.getAnrede() + " - " + k.getNachname() + " - " + k.getVorname()).equals(selectedString))
+                .filter(k -> (k.getNachname() + " " + k.getVorname()).equals(selectedString))
                 .findFirst()
                 .orElse(null);
 
@@ -178,7 +178,7 @@ public class KundenView {
         Kunde selected = null;
 
         for (Kunde k : controller.getAllKunden()) {
-            if ((k.getAnrede() + " - " + k.getNachname() + " - " + k.getVorname()).equals(selectedString)) {
+            if ((k.getNachname() + " " + k.getVorname()).equals(selectedString)) {
                 selected = k;
                 break;
             }
