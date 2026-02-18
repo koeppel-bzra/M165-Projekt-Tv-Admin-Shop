@@ -23,8 +23,6 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 public class FernseherRepo {
 
-    BestellungRepo bestellungRepo = new BestellungRepo();
-
     // Umsetzung mit Pojo
     CodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).build();
     CodecRegistry pojoCodecRegistry = fromRegistries(MongoClient.getDefaultCodecRegistry(), fromProviders(pojoCodecProvider));

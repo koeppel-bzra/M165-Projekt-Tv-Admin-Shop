@@ -11,19 +11,19 @@ public class Bestellung {
     @BsonId
     private ObjectId bestellungId;
 
-    private String bestellnummer;
+    private int bestellnummer;
     private LocalDate bestellDatum;
     private Kunde kunde;
     private List<Bestellposition> bestellpositionen;
 
-    public Bestellung(String bestellnummer, LocalDate bestellDatum, Kunde kunde, List<Bestellposition> bestellpositionen) {
+    public Bestellung(int bestellnummer, LocalDate bestellDatum, Kunde kunde, List<Bestellposition> bestellpositionen) {
         this.bestellnummer = bestellnummer;
         this.bestellDatum = bestellDatum;
         this.kunde = kunde;
         this.bestellpositionen = bestellpositionen;
     }
 
-    public Bestellung(ObjectId bestellungId, String bestellnummer, LocalDate bestellDatum, Kunde kunde, List<Bestellposition> bestellpositionen) {
+    public Bestellung(ObjectId bestellungId, int bestellnummer, LocalDate bestellDatum, Kunde kunde, List<Bestellposition> bestellpositionen) {
         this.bestellungId = bestellungId;
         this.bestellnummer = bestellnummer;
         this.bestellDatum = bestellDatum;
@@ -43,11 +43,11 @@ public class Bestellung {
         this.bestellungId = bestellungId;
     }
 
-    public String getBestellnummer() {
+    public int getBestellnummer() {
         return bestellnummer;
     }
 
-    public void setBestellnummer(String bestellnummer) {
+    public void setBestellnummer(int bestellnummer) {
         this.bestellnummer = bestellnummer;
     }
 

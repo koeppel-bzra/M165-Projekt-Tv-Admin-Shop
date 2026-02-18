@@ -92,7 +92,7 @@ public class BestellungView {
         bestellpositionen.add(bestellposition);
 
         Bestellung bestellung = new Bestellung(
-                txtBestellNummer.getText(),
+                Integer.parseInt(txtBestellNummer.getText()),
                 LocalDate.ofInstant(
                         ((Date) datePicker.getModel().getValue()).toInstant(),
                         ZoneId.systemDefault()
@@ -143,7 +143,7 @@ public class BestellungView {
     }
 
     public void updateBestellung(Bestellung bestellung) {
-        bestellung.setBestellnummer(txtBestellNummer.getText());
+        bestellung.setBestellnummer(Integer.parseInt(txtBestellNummer.getText()));
         bestellung.setBestellDatum(
                 LocalDate.ofInstant(
                         ((Date) datePicker.getModel().getValue()).toInstant(),
@@ -218,7 +218,7 @@ public class BestellungView {
 
         List<Bestellposition> bestellpositionen = b.getBestellpositionen();
 
-        txtBestellNummer.setText(b.getBestellnummer());
+        txtBestellNummer.setText(String.valueOf(b.getBestellnummer()));
         dateModel.setValue(
                 Date.from(
                         b.getBestellDatum()

@@ -197,8 +197,6 @@ public class FernseherView extends JFrame {
     }
 
 
-
-
     // Generalisierte Methode für Adden und Updaten
     private void setupDialog() {
         dialog.getContentPane().removeAll();

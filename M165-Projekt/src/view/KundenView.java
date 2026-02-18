@@ -213,7 +213,6 @@ public class KundenView {
 
 
 
-
     private void setupDialog() {
 
         dialog.setSize(400, 450);
